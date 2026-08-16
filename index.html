@@ -303,6 +303,10 @@
     border:1px solid var(--line);background:var(--card);color:var(--dim)}
   .offstatus.ok{border-color:rgba(62,207,142,.45);background:rgba(62,207,142,.08);color:var(--ok)}
   .offstatus.nao{border-color:rgba(245,184,79,.5);background:rgba(245,184,79,.07);color:var(--warn)}
+  .appver{font-size:11px;color:var(--dim);opacity:.75;margin-top:7px;text-align:center}
+  .novaversao{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));
+    background:var(--accent);color:#0b1220;border:0;border-radius:11px;padding:14px;font-size:14px;
+    font-weight:700;cursor:pointer;z-index:60;box-shadow:0 6px 24px rgba(0,0,0,.45)}
   .foot{color:var(--dim);font-size:12px;margin-top:16px;border-top:1px solid var(--line);padding-top:13px}
   button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
   @media (prefers-reduced-motion: reduce){*{transition:none!important}}
@@ -328,6 +332,7 @@
   <div id="viewAlunos" style="display:none"></div>
 
   <div id="offstatus" class="offstatus">📴 verificando modo offline…</div>
+  <div id="appver" class="appver">versão 16/08 13:41</div>
 
   <div class="foot">
     💡 Se o aluno <b>não fez</b>, escolha o motivo — a página sugere se cobra ou não, e você pode inverter tocando no botão <b>💰</b>.
@@ -1773,6 +1778,10 @@ render();
     try {
       var nomes = await caches.keys();
       var meu = nomes.filter(function (n) { return n.indexOf("aulas-") === 0; })[0];
+      // mostra qual sw.js está valendo no aparelho — se não mudar após publicar,
+      // é sinal de que o sw.js não subiu junto
+      var ver = document.getElementById("appver");
+      if (ver && meu) ver.textContent = ver.textContent.split(" · ")[0] + " · " + meu;
       var temApp = false;
       if (meu) {
         var c = await caches.open(meu);
@@ -1783,8 +1792,21 @@ render();
     } catch (e) { diz("", ""); }
   }
 
+  /* Se o app novo assumir, recarrega UMA vez pra você já ver a versão nova.
+     Na primeira instalação não recarrega (não havia versão anterior no ar). */
+  var tinhaControle = !!navigator.serviceWorker.controller, recarregou = false;
+  navigator.serviceWorker.addEventListener("controllerchange", function () {
+    if (!tinhaControle || recarregou) return;
+    recarregou = true;
+    location.reload();
+  });
+
   window.addEventListener("load", function () {
     navigator.serviceWorker.register("sw.js").then(function (reg) {
+      // procura versão nova ao abrir e de meia em meia hora com o app aberto
+      reg.update();
+      setInterval(function () { reg.update(); }, 30 * 60 * 1000);
+
       if (reg.installing) reg.installing.addEventListener("statechange", function () {
         if (this.state === "activated" || this.state === "installed") conferir();
       });
