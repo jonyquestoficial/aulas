@@ -237,16 +237,22 @@
   .cedrow .cedfez.on{color:var(--ok);border-color:var(--ok);background:rgba(62,207,142,.14)}
   .cedrow .cednao.on{color:var(--no);border-color:var(--no);background:rgba(255,128,128,.12)}
   /* avaliações */
-  .avrow{display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid var(--line)}
+  .avrow{padding:12px;border-bottom:1px solid var(--line)}
   .avrow:last-child{border-bottom:0}
-  .avinfo{flex:1;min-width:0}
   .avnome{font-size:14px;font-weight:600}
   .avsub{font-size:12px;color:var(--dim);margin-top:2px}
   .avstatus.venc{color:#c3b0ff;font-weight:600}
   .avstatus.perto{color:var(--warn)}
   .avstatus.off{opacity:.6}
-  .avbtn{flex:0 0 auto;background:var(--card2);color:#c3b0ff;border:1px solid rgba(160,132,255,.5);
-    border-radius:9px;padding:9px 12px;font-size:12px;cursor:pointer}
+  .avadd{display:flex;gap:8px;align-items:center;margin-top:9px}
+  .avdata{flex:1;min-width:0;background:var(--card2);color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:9px 10px;font-size:13px;color-scheme:dark}
+  .avbtn{flex:0 0 auto;background:rgba(160,132,255,.12);color:#c3b0ff;border:1px solid rgba(160,132,255,.5);
+    border-radius:9px;padding:10px 14px;font-size:13px;cursor:pointer;font-weight:600}
+  .avhist{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+  .avtag{display:inline-flex;align-items:center;gap:4px;background:var(--card2);border:1px solid var(--line);
+    border-radius:99px;padding:3px 5px 3px 10px;font-size:11px;color:var(--dim)}
+  .avtag .avdel{background:none;border:0;color:var(--dim);cursor:pointer;font-size:14px;line-height:1;padding:2px 5px}
   /* cobranças */
   .bigbtn.cobrar-btn{background:rgba(110,168,254,.1);color:var(--accent);border-color:var(--accent)}
   .bigbtn span{font-weight:400;opacity:.85;font-size:13px}
@@ -278,6 +284,8 @@
   .aviso{background:var(--card2);color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:8px 13px;font-size:12px;cursor:pointer}
   .importbtn{background:var(--card);color:var(--accent);border:1px dashed #3a4150;border-radius:9px;
     padding:12px 14px;font-size:13px;cursor:pointer;width:100%;margin:18px 0 4px}
+  .importbtn.destaque{border-style:solid;border-color:var(--accent);background:rgba(110,168,254,.08);
+    font-weight:600;margin-top:4px}
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;z-index:50}
   .modalbox{background:var(--bg);border:1px solid var(--line);border-radius:16px 16px 0 0;width:100%;
     max-width:640px;max-height:88vh;display:flex;flex-direction:column;padding:18px 16px 14px}
@@ -332,7 +340,7 @@
   <div id="viewAlunos" style="display:none"></div>
 
   <div id="offstatus" class="offstatus">📴 verificando modo offline…</div>
-  <div id="appver" class="appver">versão 16/08 13:41</div>
+  <div id="appver" class="appver">versão 16/08 19:23</div>
 
   <div class="foot">
     💡 Se o aluno <b>não fez</b>, escolha o motivo — a página sugere se cobra ou não, e você pode inverter tocando no botão <b>💰</b>.
@@ -773,7 +781,7 @@ function renderDia(){
       const _ano=diaAtual.slice(0,4), _lim=franquiaDe(a), _us=faltasGratisAno(a,_ano), _rest=_lim-_us;
       body+=`<div class="franqline">🎁 Faltas grátis de ${_ano}: <b>${_us}</b>/${_lim} · ${_rest>0?`restam <b>${_rest}</b>`:`<span class="over">esgotada — excedente vai pra cobrança</span>`}</div>`;
     }
-    if(avalNaHora)body+=`<button class="avalbtn">📸 registrar avaliação de hoje</button>`;
+    if(avalNaHora)body+=`<button class="avalbtn">📸 registrar avaliação de ${labelData(diaAtual)}</button>`;
     if(r)body+=`<button class="clear">limpar marcação</button>`;
     card.innerHTML=head+body;
     const bAval=card.querySelector(".avalbtn");
@@ -1085,7 +1093,7 @@ function abrirAvaliacoes(){
   const ov=document.createElement("div");ov.id="avModal";ov.className="modal";
   ov.innerHTML=`<div class="modalbox">
     <h3>📸 Avaliações funcionais</h3>
-    <div class="modalsub">A cada ${AVAL_SEMANAS} semanas por padrão — é também quando você troca o treino. As fotos ficam na sua galeria; aqui fica o controle das datas.</div>
+    <div class="modalsub">A cada ${AVAL_SEMANAS} semanas por padrão — é também quando você troca o treino. As fotos ficam na sua galeria; aqui fica o controle das datas.<br><b>Esqueceu de registrar no dia?</b> Mude a data antes de tocar em registrar — a próxima é contada a partir dela.</div>
     <div class="implist" id="avLista"></div>
     <div class="modalfoot"><span></span><span class="modalbtns"><button id="avClose">fechar</button></span></div>
   </div>`;
@@ -1099,19 +1107,32 @@ function abrirAvaliacoes(){
     const lista=ov.querySelector("#avLista");
     if(!alunos.length){lista.innerHTML=`<div class="empty" style="padding:18px 12px">Nenhum aluno ativo.</div>`;return}
     lista.innerHTML=alunos.map(a=>{
-      const s=statusAval(a), n=listaAval(a).length;
+      const s=statusAval(a), L=listaAval(a);
       return `<div class="avrow" data-id="${a.id}">
-        <div class="avinfo"><div class="avnome">${esc(a.nome)}</div>
-          <div class="avsub"><span class="avstatus ${s.cls}">${s.txt}</span>
-            ${s.u?` · última em ${labelData(s.u.d)}`:""}${n?` · ${n} no total`:""}</div></div>
-        <button class="avbtn">registrar hoje</button></div>`;
+        <div class="avnome">${esc(a.nome)}</div>
+        <div class="avsub"><span class="avstatus ${s.cls}">${s.txt}</span>${s.u?` · última em ${labelData(s.u.d)}`:""}</div>
+        <div class="avadd">
+          <input type="date" class="avdata" value="${hojeStr()}" max="${hojeStr()}">
+          <button class="avbtn">registrar</button>
+        </div>
+        ${L.length?`<div class="avhist">${L.slice().reverse().slice(0,8).map(x=>
+          `<span class="avtag">${labelData(x.d)}<button class="avdel" data-d="${x.d}">×</button></span>`).join("")}</div>`:""}
+      </div>`;
     }).join("");
     lista.querySelectorAll(".avrow").forEach(row=>{
       const a=DB.alunos.find(x=>x.id===row.dataset.id);
       row.querySelector(".avbtn").onclick=()=>{
-        if(registrarAval(a,hojeStr())){saveDB();pintar()}
-        else alert("Já existe uma avaliação registrada hoje para "+a.nome+".");
+        const ds=row.querySelector(".avdata").value;
+        if(!ds){alert("Escolha a data em que a avaliação foi feita.");return}
+        if(registrarAval(a,ds)){saveDB();pintar()}
+        else alert(`${a.nome} já tem uma avaliação registrada em ${labelData(ds)}.`);
       };
+      row.querySelectorAll(".avdel").forEach(b=>b.onclick=()=>{
+        const ds=b.dataset.d;
+        if(!confirm(`Apagar a avaliação de ${a.nome} em ${labelData(ds)}?`))return;
+        a.avaliacoes=(a.avaliacoes||[]).filter(x=>x.d!==ds);
+        saveDB();pintar();
+      });
     });
   }
   pintar();
@@ -1207,8 +1228,11 @@ function gerarExport(dados,tTotal,tPago){
    valores em vez de duplicar — mesmo padrão do dedup da fatura. */
 function payloadPatrimonio(ym){
   const receitas=DB.alunos.map(a=>{
-    const c=calcMes(a,ym);
-    return {aluno:a.nome, valor:c.total, pago:!!DB.pag[ym+"_"+a.id], src:"aulas|"+ym+"|aluno|"+a.id};
+    const c=calcMes(a,ym), recebido=pagoDe(a,ym);
+    // se o mês já foi cobrado, o que vale pro Patrimônio é o dinheiro que ENTROU
+    // (pode diferir do previsto quando houve crédito de falta ou ajuste na hora)
+    return {aluno:a.nome, valor:(recebido===null?c.total:recebido), previsto:c.total,
+            pago:recebido!==null, src:"aulas|"+ym+"|aluno|"+a.id};
   }).filter(r=>r.valor>0);
   const cst=custosMesCalc(ym);
   const custos=[].concat(
@@ -1490,6 +1514,13 @@ function renderFinanceiro(){
   gwrap.innerHTML=`<div class="gaugebox">${gaugeMargem(pS)}</div><div class="gaugemsg">${metaMsg}</div>`;
   el.appendChild(gwrap);
 
+  // ── enviar receita pro app Patrimônio (fica logo abaixo da receita, não no fim da tela) ──
+  const expP=document.createElement("button");expP.className="importbtn destaque";
+  expP.textContent="💸 Enviar receita do mês pro app Patrimônio";
+  expP.onclick=abrirExportPatrimonio;
+  el.appendChild(expP);
+  el.insertAdjacentHTML("beforeend",`<div class="finhint" style="margin-top:0;margin-bottom:16px">Gera um texto pra colar no app Patrimônio, em vez de redigitar aluno por aluno lá.</div>`);
+
   // ── custos fixos ──
   el.insertAdjacentHTML("beforeend",`<div class="exhead">Custos fixos (repetem todo mês)</div>`);
   const wF=document.createElement("div");
@@ -1543,13 +1574,6 @@ function renderFinanceiro(){
   el.appendChild(imp);
   el.insertAdjacentHTML("beforeend",`<input type="file" id="impFile" style="display:none"><div class="finhint" style="margin-top:0">Baixe a fatura do app do banco (CSV ou OFX) e solte aqui. É lido só no seu navegador — nada é enviado.</div>`);
   el.querySelector("#impFile").onchange=lerFaturaFile;
-
-  // ── enviar receita pro app Patrimônio ──
-  const expP=document.createElement("button");expP.className="importbtn";
-  expP.textContent="💸 Enviar receita do mês pro app Patrimônio";
-  expP.onclick=abrirExportPatrimonio;
-  el.appendChild(expP);
-  el.insertAdjacentHTML("beforeend",`<div class="finhint" style="margin-top:0">Gera um texto pra colar no app Patrimônio, em vez de redigitar aluno por aluno lá.</div>`);
 
   // ── comparação mês a mês (interativo) ──
   el.insertAdjacentHTML("beforeend",`<div class="exhead">Receita × custos mês a mês</div>`);
