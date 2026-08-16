@@ -208,6 +208,65 @@
   .relbadge.free{color:var(--dim)}
   .relfranq{font-size:11px;color:var(--dim);margin-top:7px}
   .relsem{font-size:12px;color:var(--dim);padding:11px 12px;border-top:1px solid var(--line)}
+  /* avisos extras do dia */
+  .alertbox.aval{background:rgba(160,132,255,.09);border-color:rgba(160,132,255,.45);color:#c3b0ff}
+  .alertbox.aval a{color:#c3b0ff}
+  .alertbox.sumido{background:rgba(255,128,128,.07);border-color:rgba(255,128,128,.4);color:#ffb3b3}
+  /* marcar o dia inteiro num toque */
+  .todosbtn{width:100%;background:rgba(62,207,142,.12);color:var(--ok);border:1px solid var(--ok);
+    border-radius:11px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:12px}
+  .todosbtn span{font-weight:400;opacity:.8}
+  /* motivos em 1 toque */
+  .motrapidos{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .motrapidos.ced{padding:0 12px 10px}
+  .motchip{background:var(--card2);color:var(--dim);border:1px solid var(--line);border-radius:99px;
+    padding:8px 12px;font-size:12px;cursor:pointer;min-height:36px}
+  .motchip.on{color:var(--accent);border-color:var(--accent);background:rgba(110,168,254,.12)}
+  .chip.avalchip{color:#c3b0ff;border-color:rgba(160,132,255,.5);background:rgba(160,132,255,.12)}
+  .avalbtn{width:100%;margin-top:10px;background:rgba(160,132,255,.12);color:#c3b0ff;
+    border:1px solid rgba(160,132,255,.5);border-radius:9px;padding:11px;font-size:13px;cursor:pointer}
+  /* colocar em dia */
+  .cedgrupo{border-bottom:1px solid var(--line)}
+  .cedgrupo:last-child{border-bottom:0}
+  .ceddia{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.05em;padding:9px 12px 4px}
+  .cedrow{display:flex;align-items:center;gap:8px;padding:7px 12px}
+  .cednome{flex:1;font-size:14px;min-width:0}
+  .cedfalta{font-size:11px;color:var(--warn)}
+  .cedrow button{width:46px;height:40px;border-radius:9px;font-size:16px;cursor:pointer;
+    background:var(--card2);color:var(--dim);border:1px solid var(--line);flex:0 0 auto}
+  .cedrow .cedfez.on{color:var(--ok);border-color:var(--ok);background:rgba(62,207,142,.14)}
+  .cedrow .cednao.on{color:var(--no);border-color:var(--no);background:rgba(255,128,128,.12)}
+  /* avaliações */
+  .avrow{display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid var(--line)}
+  .avrow:last-child{border-bottom:0}
+  .avinfo{flex:1;min-width:0}
+  .avnome{font-size:14px;font-weight:600}
+  .avsub{font-size:12px;color:var(--dim);margin-top:2px}
+  .avstatus.venc{color:#c3b0ff;font-weight:600}
+  .avstatus.perto{color:var(--warn)}
+  .avstatus.off{opacity:.6}
+  .avbtn{flex:0 0 auto;background:var(--card2);color:#c3b0ff;border:1px solid rgba(160,132,255,.5);
+    border-radius:9px;padding:9px 12px;font-size:12px;cursor:pointer}
+  /* cobranças */
+  .bigbtn.cobrar-btn{background:rgba(110,168,254,.1);color:var(--accent);border-color:var(--accent)}
+  .bigbtn span{font-weight:400;opacity:.85;font-size:13px}
+  .cbrow{padding:12px;border-bottom:1px solid var(--line)}
+  .cbrow:last-child{border-bottom:0}
+  .cbtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .cbnome{font-weight:600;font-size:15px;flex:1;min-width:0}
+  .cbtotal{font-weight:700;font-size:16px;color:var(--accent)}
+  .cbdet{font-size:12px;color:var(--dim);margin-top:5px}
+  .cbatraso{color:var(--no);font-weight:600}
+  .cbconta{font-size:12px;color:var(--dim);margin-top:7px;background:var(--card2);
+    border-radius:8px;padding:8px 10px;line-height:1.7}
+  .cbnota{opacity:.8}
+  .cbcred{color:var(--ok)}
+  .cbacoes{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+  .cbacoes button{flex:1;min-width:130px;border-radius:9px;padding:10px;font-size:12px;cursor:pointer;
+    background:var(--card2);color:var(--ink);border:1px solid var(--line)}
+  .cbacoes .cbpago{color:var(--ok);border-color:var(--ok);background:rgba(62,207,142,.1);font-weight:600}
+  .checkline{display:flex;align-items:flex-start;gap:8px;line-height:1.5;margin:2px 0 10px}
+  .checkline input{width:18px;height:18px;flex:0 0 auto;accent-color:var(--accent);margin-top:1px}
   .trfsec{font-size:13px;color:var(--ink);margin-bottom:7px}
   #trfModal textarea{width:100%;height:88px;background:var(--card2);color:var(--dim);border:1px solid var(--line);
     border-radius:9px;padding:9px;font-size:11px;font-family:ui-monospace,Consolas,monospace;resize:vertical}
@@ -280,7 +339,7 @@
 /* ───────────────── dados ───────────────── */
 const KEY="personal_aulas_v1";
 let storageOK=true;
-const DEFAULTS=()=>({alunos:[],reg:{},extras:[],pag:{},custosFixos:[],custosMes:{},lastBackup:null,v:3});
+const DEFAULTS=()=>({alunos:[],reg:{},extras:[],pag:{},custosFixos:[],custosMes:{},lastBackup:null,v:4});
 // migra alunos antigos (hora única + dias[]) para horarios{dia:hora}
 function migrate(db){
   (db.alunos||[]).forEach(a=>{
@@ -313,13 +372,20 @@ function loadDB(){
       (db.alunos||[]).forEach(a=>{if(!a.cadastro)a.cadastro=hj});
       _migrou=true;
     }
-    db.v=3;
+    // v<4: "pago" deixa de ser sim/não e passa a guardar QUANTO foi cobrado.
+    // É isso que permite saber se uma falta já foi descontada ou virou crédito.
+    if(rawV<4){_migrarPag=true;_migrou=true;}
+    db.v=4;
     return db;
   }catch(e){storageOK=false;return DEFAULTS()}
 }
 function saveDB(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){storageOK=false;refreshSandbox()}}
+let _migrarPag=false;
 let DB=loadDB();
-if(_migrou)saveDB(); // persiste a migração uma vez
+// obs.: a conversão de DB.pag roda no fim do script (precisa de calcMes,
+// que depende de funções declaradas mais abaixo).
+const pagoDe=(a,ym)=>{const p=DB.pag[ym+"_"+a.id];return p?(typeof p==="object"?(+p.v||0):0):null};
+const estaPago=(a,ym)=>!!DB.pag[ym+"_"+a.id];
 function refreshSandbox(){document.getElementById("sandboxNote").style.display=storageOK?"none":"block"}
 
 // franq: consome a franquia anual de faltas grátis do aluno (falta do próprio aluno, não-cobrável)
@@ -335,6 +401,21 @@ const MOTIVOS=[
   {k:"outro",     l:"Outro",                     c:false, franq:true},
 ];
 const motivoLabel=k=>{const m=MOTIVOS.find(m=>m.k===k);return m?m.l:"(sem motivo)"};
+// os 4 motivos do dia a dia, em 1 toque (o resto fica na lista completa)
+const MOT_RAPIDOS=["viagem","doenca","faltou","cima_hora"];
+const MOT_CURTO={viagem:"✈️ viagem",doenca:"🤒 doença",faltou:"❌ faltou",cima_hora:"⏰ em cima da hora",ferias:"🏖 férias"};
+// define o motivo e já decide se cobra (respeitando a franquia anual)
+function setMotivo(a,ds,k){
+  const key=rkey(ds,a.id);
+  if(!DB.reg[key])DB.reg[key]={s:"nao",m:"",c:false};
+  const m=MOTIVOS.find(x=>x.k===k);
+  DB.reg[key].m=k;
+  let cobra=m?m.c:false;
+  // franquia anual esgotada + falta do aluno (normalmente grátis) → passa a cobrar
+  if(m&&m.franq&&!m.c&&faltasGratisAno(a,ds.slice(0,4),key)>=franquiaDe(a))cobra=true;
+  DB.reg[key].c=cobra;
+  saveDB();render();
+}
 const FRANQUIA_PADRAO=30;
 // nº de faltas grátis (não-cobráveis que consomem franquia) já usadas pelo aluno no ano
 function faltasGratisAno(a,ano,exceptKey){
@@ -476,8 +557,108 @@ function calcMes(a,ym){
   // PREVISÃO: toda aula prevista no mês é cobrável, exceto as faltas perdoadas; + extras cobráveis.
   // Marcar "fez" ou uma falta cobrável não muda o previsto; só a falta SEM cobrança reduz.
   const cobraveis=Math.max(0,previstas-perdoadas.length)+extrasCobr;
-  const total=a.tipo==="mensal"?(previstas||feitas||extras.length?a.valor:0):cobraveis*a.valor;
-  return {previstas,feitas,cobradas,perdoadas,semMarca,extras,extrasCobr,cobraveis,total};
+  let total, proRata=null;
+  if(a.tipo==="mensal"){
+    const base=(previstas||feitas||extras.length)?a.valor:0;
+    const cheias=previstasCheias(a,ym);
+    // entrou (ou saiu) no meio do mês → cobra proporcional às aulas que couberam
+    if(base&&a.proRata!==false&&cheias>0&&previstas>0&&previstas<cheias){
+      total=Math.round(base*previstas/cheias*100)/100;
+      proRata={previstas,cheias};
+    }else total=base;
+  }else{
+    total=cobraveis*a.valor;
+  }
+  return {previstas,feitas,cobradas,perdoadas,semMarca,extras,extrasCobr,cobraveis,total,proRata};
+}
+// quantas aulas o aluno teria se o mês fosse inteiro (base do proporcional)
+function previstasCheias(a,ym){
+  const [Y,M]=ym.split("-").map(Number), n=new Date(Y,M,0).getDate();
+  let c=0;
+  for(let d=1;d<=n;d++){if(a.dias.includes(fromYmd(ym+"-"+pad(d)).getDay()))c++;}
+  return c;
+}
+
+/* ───────────────── cobrança: regime, saldo e créditos ───────────────── */
+const hojeYm=()=>hojeStr().slice(0,7);
+const regimeDe=a=>(a.regime==="adiantado"?"adiantado":"vencido");
+const vencDe=a=>Math.min(28,Math.max(1,+a.diaVenc||5));
+function mesesDoAluno(a,ate){
+  const out=[]; let ym=(a.desde||hojeStr()).slice(0,7);
+  while(ym<=ate&&out.length<240){out.push(ym);ym=addMesYm(ym,1);}
+  return out;
+}
+// quanto foi cobrado A MAIS nos meses já pagos (= crédito do aluno)
+function saldoAntesDe(a,ymRef){
+  let s=0;
+  mesesDoAluno(a,addMesYm(ymRef,-1)).forEach(ym=>{
+    const p=pagoDe(a,ym);
+    if(p===null)return;                    // mês ainda não cobrado: fora do saldo
+    s+=p-calcMes(a,ym).total;
+  });
+  return Math.round(s*100)/100;
+}
+// de onde veio o crédito (faltas não cobradas em meses já pagos)
+function origemCredito(a,ymRef){
+  const out=[];
+  mesesDoAluno(a,addMesYm(ymRef,-1)).forEach(ym=>{
+    if(pagoDe(a,ym)===null)return;
+    calcMes(a,ym).perdoadas.forEach(f=>out.push({ds:f.ds,m:f.m}));
+  });
+  return out;
+}
+// meses que já dá pra cobrar e ainda não foram cobrados
+function mesesEmAberto(a){
+  const limite=regimeDe(a)==="adiantado"?hojeYm():addMesYm(hojeYm(),-1);
+  return mesesDoAluno(a,limite).filter(ym=>pagoDe(a,ym)===null);
+}
+// o que cobrar agora deste aluno (mês de referência + conta explícita)
+function proximaCobranca(a){
+  const abertos=mesesEmAberto(a);
+  if(!abertos.length)return null;
+  const ym=abertos[0], c=calcMes(a,ym);
+  const credito=Math.max(0,saldoAntesDe(a,ym));
+  const aCobrar=Math.max(0,Math.round((c.total-credito)*100)/100);
+  const venc=(regimeDe(a)==="adiantado"?ym:addMesYm(ym,1))+"-"+pad(vencDe(a));
+  return {ym,c,bruto:c.total,credito,aCobrar,venc,emAberto:abertos.length,
+          origem:credito>0?origemCredito(a,ym):[]};
+}
+
+/* ───────────────── avaliação funcional ───────────────── */
+const AVAL_SEMANAS=8;
+const intervaloAval=a=>(a.intervaloAval==null?AVAL_SEMANAS:+a.intervaloAval);
+const listaAval=a=>(a.avaliacoes||[]).slice().sort((x,y)=>x.d<y.d?-1:1);
+function ultimaAval(a){const L=listaAval(a);return L.length?L[L.length-1]:null}
+// dias até a próxima avaliação: negativo = atrasada; null = desligada; NaN = nunca avaliou
+function diasParaAval(a){
+  if(!intervaloAval(a))return null;
+  const u=ultimaAval(a);
+  if(!u)return NaN;
+  return Math.round((fromYmd(addDias(u.d,intervaloAval(a)*7))-fromYmd(hojeStr()))/86400000);
+}
+function registrarAval(a,ds){
+  if(!a.avaliacoes)a.avaliacoes=[];
+  if(a.avaliacoes.some(x=>x.d===ds))return false;
+  a.avaliacoes.push({d:ds});
+  return true;
+}
+
+/* ───────────────── aluno sumindo (retenção) ───────────────── */
+const DIAS_SUMIDO=10;
+function ultimoTreino(a){
+  let u=null;
+  for(const k in DB.reg){
+    if(!k.endsWith("_"+a.id))continue;
+    if(DB.reg[k].s!=="fez")continue;
+    const ds=k.slice(0,10); if(!u||ds>u)u=ds;
+  }
+  DB.extras.forEach(e=>{if(e.aluno===a.id&&(!u||e.data>u))u=e.data});
+  return u;
+}
+function diasSemTreinar(a){
+  const u=ultimoTreino(a);
+  if(!u)return null;
+  return Math.round((fromYmd(hojeStr())-fromYmd(u))/86400000);
 }
 
 /* ───────────────── estado de UI ───────────────── */
@@ -510,11 +691,30 @@ function renderDia(){
 
   if(pend.length){
     const bx=document.createElement("div");bx.className="alertbox";
-    const p=pend[0];
-    bx.innerHTML=`⚠️ <b>${pend.length}</b> aula${pend.length>1?"s":""} sem marcação em dias anteriores.
-      Primeira: ${p.aluno.nome} em ${labelData(p.ds)} — <a id="irPend">resolver</a>`;
+    bx.innerHTML=`⚠️ <b>${pend.length}</b> aula${pend.length>1?"s":""} sem marcação em dias anteriores —
+      <a id="irPend">colocar em dia agora</a>`;
     el.appendChild(bx);
-    bx.querySelector("#irPend").onclick=()=>{diaAtual=p.ds;render()};
+    bx.querySelector("#irPend").onclick=()=>abrirColocarEmDia();
+  }
+
+  // 📸 avaliações vencidas (é a hora de tirar as fotos, com o aluno na sua frente)
+  const avaliar=DB.alunos.filter(a=>a.ativo!==false).map(a=>({a,d:diasParaAval(a)}))
+    .filter(x=>x.d!==null&&(isNaN(x.d)||x.d<=0));
+  if(avaliar.length){
+    const bx=document.createElement("div");bx.className="alertbox aval";
+    bx.innerHTML=`📸 <b>${avaliar.length}</b> ${avaliar.length>1?"avaliações funcionais":"avaliação funcional"} na hora:
+      ${avaliar.slice(0,3).map(x=>esc(x.a.nome)).join(", ")}${avaliar.length>3?"…":""} — <a id="irAval">ver e registrar</a>`;
+    el.appendChild(bx);
+    bx.querySelector("#irAval").onclick=()=>abrirAvaliacoes();
+  }
+
+  // 👀 quem está sumindo (o vazamento silencioso de receita)
+  const sumidos=DB.alunos.filter(a=>a.ativo!==false).map(a=>({a,d:diasSemTreinar(a)}))
+    .filter(x=>x.d!==null&&x.d>=DIAS_SUMIDO).sort((x,y)=>y.d-x.d);
+  if(sumidos.length){
+    const bx=document.createElement("div");bx.className="alertbox sumido";
+    bx.innerHTML=`👀 Sem treinar há um tempo: ${sumidos.slice(0,3).map(x=>`<b>${esc(x.a.nome)}</b> (${x.d}d)`).join(" · ")}${sumidos.length>3?` +${sumidos.length-3}`:""}`;
+    el.appendChild(bx);
   }
 
   if(!DB.alunos.length){
@@ -526,6 +726,18 @@ function renderDia(){
   if(!lista.length)
     el.insertAdjacentHTML("beforeend",`<div class="empty">Ninguém agendado pra este dia. 🌴 (Dá pra adicionar uma aula extra ali embaixo.)</div>`);
 
+  // na maioria dos dias todo mundo aparece: 1 toque resolve, e você só corrige a exceção
+  const semMarcar=lista.filter(a=>!DB.reg[rkey(diaAtual,a.id)]);
+  if(semMarcar.length>1){
+    const bt=document.createElement("button");bt.className="todosbtn";
+    bt.innerHTML=`✓ Todos fizeram <span>(${semMarcar.length})</span>`;
+    bt.onclick=()=>{
+      semMarcar.forEach(a=>{DB.reg[rkey(diaAtual,a.id)]={s:"fez"}});
+      saveDB();render();
+    };
+    el.appendChild(bt);
+  }
+
   lista.forEach(a=>{
     const k=rkey(diaAtual,a.id), r=DB.reg[k];
     const card=document.createElement("div");
@@ -535,13 +747,20 @@ function renderDia(){
     head+=hDia?`<span class="chip">${hDia}</span>`:`<span class="chip semhora">⏱ sem horário</span>`;
     head+=`<span class="chip">${a.tipo==="mensal"?"mensal "+fmtRS(a.valor):fmtRS(a.valor)+"/aula"}</span>`;
     if(r&&r.s==="nao")head+=`<span class="chip ${r.c?"warn":"no"}">${r.c?"💰 será cobrada":"não cobra"}</span>`;
+    const dAval=diasParaAval(a), avalNaHora=(dAval!==null&&(isNaN(dAval)||dAval<=0));
+    if(avalNaHora)head+=`<span class="chip avalchip">📸 avaliar</span>`;
     head+=`</div>`;
     let body=`<div class="cbtns">
       <button class="bfez${r&&r.s==="fez"?" on":""}">✓ Fez</button>
       <button class="bnao${r&&r.s==="nao"?" on":""}">✗ Não fez</button></div>`;
     if(r&&r.s==="nao"){
+      // motivos mais comuns em 1 toque; o resto continua na lista
+      body+=`<div class="motrapidos">${MOT_RAPIDOS.map(k=>{
+        const m=MOTIVOS.find(x=>x.k===k);
+        return `<button class="motchip${r.m===k?" on":""}" data-k="${k}">${MOT_CURTO[k]||m.l}</button>`;
+      }).join("")}</div>`;
       body+=`<div class="naoblock">
-        <select class="mot"><option value="">— motivo? —</option>${MOTIVOS.map(m=>
+        <select class="mot"><option value="">— outro motivo… —</option>${MOTIVOS.map(m=>
           `<option value="${m.k}"${r.m===m.k?" selected":""}>${m.l}</option>`).join("")}</select>
         <button class="cobrar${r.c?" sim":""}">💰 cobrar: ${r.c?"SIM":"não"}</button>`;
       if(r.m==="outro")body+=`<input type="text" class="obs" placeholder="qual?" value="${esc(r.o||"")}">`;
@@ -549,8 +768,15 @@ function renderDia(){
       const _ano=diaAtual.slice(0,4), _lim=franquiaDe(a), _us=faltasGratisAno(a,_ano), _rest=_lim-_us;
       body+=`<div class="franqline">🎁 Faltas grátis de ${_ano}: <b>${_us}</b>/${_lim} · ${_rest>0?`restam <b>${_rest}</b>`:`<span class="over">esgotada — excedente vai pra cobrança</span>`}</div>`;
     }
+    if(avalNaHora)body+=`<button class="avalbtn">📸 registrar avaliação de hoje</button>`;
     if(r)body+=`<button class="clear">limpar marcação</button>`;
     card.innerHTML=head+body;
+    const bAval=card.querySelector(".avalbtn");
+    if(bAval)bAval.onclick=()=>{
+      if(registrarAval(a,diaAtual)){saveDB();render();
+        alert(`Avaliação de ${a.nome} registrada em ${labelData(diaAtual)}.\n\nPróxima em ${intervaloAval(a)} semanas — o app te lembra.`);}
+    };
+    card.querySelectorAll(".motchip").forEach(b=>b.onclick=()=>setMotivo(a,diaAtual,b.dataset.k));
 
     card.querySelector(".bfez").onclick=()=>{
       if(r&&r.s==="fez")delete DB.reg[k];else DB.reg[k]={s:"fez"};
@@ -561,15 +787,7 @@ function renderDia(){
       saveDB();render();
     };
     const mot=card.querySelector(".mot");
-    if(mot)mot.onchange=e=>{
-      const m=MOTIVOS.find(x=>x.k===e.target.value);
-      DB.reg[k].m=e.target.value;
-      let cobra=m?m.c:false;
-      // franquia anual esgotada + falta do aluno (consome franquia, normalmente grátis) → passa a cobrar
-      if(m&&m.franq&&!m.c&&faltasGratisAno(a,diaAtual.slice(0,4),k)>=franquiaDe(a))cobra=true;
-      DB.reg[k].c=cobra;
-      saveDB();render();
-    };
+    if(mot)mot.onchange=e=>setMotivo(a,diaAtual,e.target.value);
     const cb=card.querySelector(".cobrar");
     if(cb)cb.onclick=()=>{DB.reg[k].c=!DB.reg[k].c;saveDB();render()};
     const obs=card.querySelector(".obs");
@@ -630,6 +848,12 @@ function renderMes(){
   nav.querySelector("#mPrev").onclick=()=>moveMes(-1);
   nav.querySelector("#mNext").onclick=()=>moveMes(1);
 
+  // sempre visível: é a ação que traz dinheiro
+  const nCob=DB.alunos.filter(a=>a.ativo!==false&&proximaCobranca(a)).length;
+  el.insertAdjacentHTML("beforeend",
+    `<button id="btCobrar" class="bigbtn cobrar-btn">🧾 Cobranças${nCob?` <span>· ${nCob} em aberto</span>`:""}</button>`);
+  el.querySelector("#btCobrar").onclick=abrirCobrancas;
+
   const dados=DB.alunos.map(a=>({a,c:calcMes(a,mesAtual)}))
     .filter(x=>x.c.previstas||x.c.feitas||x.c.extras.length||x.c.cobradas.length||x.c.perdoadas.length);
   if(!dados.length){
@@ -638,7 +862,7 @@ function renderMes(){
   }
 
   let tTotal=0,tPago=0;
-  dados.forEach(({a,c})=>{tTotal+=c.total;if(DB.pag[mesAtual+"_"+a.id])tPago+=c.total});
+  dados.forEach(({a,c})=>{tTotal+=c.total;const p=pagoDe(a,mesAtual);if(p!==null)tPago+=p});
   el.insertAdjacentHTML("beforeend",`<div class="resumo">
     <div class="stat"><div class="v">${fmtRS(tTotal)}</div><div class="k">previsto no mês</div></div>
     <div class="stat ok"><div class="v">${fmtRS(tPago)}</div><div class="k">já recebido</div></div>
@@ -668,7 +892,7 @@ function renderMes(){
   }
 
   dados.forEach(({a,c})=>{
-    const pago=!!DB.pag[mesAtual+"_"+a.id];
+    const pago=estaPago(a,mesAtual);
     const card=document.createElement("div");card.className="mcard";
     let det="";
     if(c.cobradas.length)det+=`<div class="mdet"><span class="dt">💰 cobráveis:</span> ${c.cobradas.map(x=>labelData(x.ds)+" ("+motivoLabel(x.m)+(x.o?": "+esc(x.o):"")+")").join(" · ")}</div>`;
@@ -689,7 +913,7 @@ function renderMes(){
       <div class="mactions"><button class="aviso">📋 copiar aviso p/ aluno</button></div>`;
     card.querySelector(".pago").onclick=()=>{
       const k=mesAtual+"_"+a.id;
-      if(DB.pag[k])delete DB.pag[k];else DB.pag[k]=true;
+      if(DB.pag[k])delete DB.pag[k];else DB.pag[k]={v:c.total,d:hojeStr()};
       saveDB();render();
     };
     card.querySelector(".aviso").onclick=e=>copiar(avisoAluno(a,c),e.currentTarget);
@@ -789,6 +1013,170 @@ function abrirRelatorioFaltas(dados){
   ov.querySelector("#relCopy").onclick=e=>copiar(textoRelatorioFaltas(dados),e.currentTarget);
 }
 
+/* ── colocar em dia: resolve todas as aulas passadas sem marcação num lugar só ── */
+function abrirColocarEmDia(){
+  const old=document.getElementById("cedModal");if(old)old.remove();
+  const ov=document.createElement("div");ov.id="cedModal";ov.className="modal";
+  ov.innerHTML=`<div class="modalbox">
+    <h3>⏱ Colocar em dia</h3>
+    <div class="modalsub">Todas as aulas passadas sem marcação, num lugar só — sem ficar navegando dia a dia.</div>
+    <div class="imptools"><button id="cedTodas">✓ marcar todas como feitas</button></div>
+    <div class="implist" id="cedLista"></div>
+    <div class="modalfoot"><span id="cedResumo"></span>
+      <span class="modalbtns"><button id="cedClose">fechar</button></span></div>
+  </div>`;
+  document.body.appendChild(ov);
+  const fechar=()=>{ov.remove();render()};
+  ov.querySelector("#cedClose").onclick=fechar;
+  ov.onclick=e=>{if(e.target===ov)fechar()};
+  function pintar(){
+    const pend=pendencias(), lista=ov.querySelector("#cedLista");
+    ov.querySelector("#cedResumo").textContent=pend.length?pend.length+" pendente(s)":"tudo em dia ✓";
+    if(!pend.length){lista.innerHTML=`<div class="empty" style="padding:18px 12px">Tudo em dia. 🎉</div>`;return}
+    const porDia={};
+    pend.forEach(p=>{(porDia[p.ds]=porDia[p.ds]||[]).push(p)});
+    lista.innerHTML=Object.keys(porDia).sort().map(ds=>`
+      <div class="cedgrupo"><div class="ceddia">${labelDia(ds)}</div>
+        ${porDia[ds].map(p=>{
+          const r=DB.reg[rkey(ds,p.aluno.id)], semMot=r&&r.s==="nao"&&!r.m;
+          return `<div class="cedrow" data-ds="${ds}" data-id="${p.aluno.id}">
+              <span class="cednome">${esc(p.aluno.nome)}${semMot?' <span class="cedfalta">faltou — qual motivo?</span>':""}</span>
+              <button class="cedfez${r&&r.s==="fez"?" on":""}">✓</button>
+              <button class="cednao${r&&r.s==="nao"?" on":""}">✗</button>
+            </div>
+            ${semMot?`<div class="motrapidos ced" data-ds="${ds}" data-id="${p.aluno.id}">
+              ${MOT_RAPIDOS.map(k=>`<button class="motchip" data-k="${k}">${MOT_CURTO[k]}</button>`).join("")}</div>`:""}`;
+        }).join("")}
+      </div>`).join("");
+    lista.querySelectorAll(".cedrow").forEach(row=>{
+      const ds=row.dataset.ds, id=row.dataset.id;
+      row.querySelector(".cedfez").onclick=()=>{DB.reg[rkey(ds,id)]={s:"fez"};saveDB();pintar()};
+      row.querySelector(".cednao").onclick=()=>{DB.reg[rkey(ds,id)]={s:"nao",m:"",c:false};saveDB();pintar()};
+    });
+    lista.querySelectorAll(".motrapidos.ced").forEach(box=>{
+      const ds=box.dataset.ds, a=DB.alunos.find(x=>x.id===box.dataset.id);
+      box.querySelectorAll(".motchip").forEach(b=>b.onclick=()=>{setMotivo(a,ds,b.dataset.k);pintar()});
+    });
+  }
+  ov.querySelector("#cedTodas").onclick=()=>{
+    pendencias().forEach(p=>{const k=rkey(p.ds,p.aluno.id);if(!DB.reg[k])DB.reg[k]={s:"fez"}});
+    saveDB();pintar();
+  };
+  pintar();
+}
+
+/* ── avaliação funcional: quem está na hora, e registrar em 1 toque ── */
+function statusAval(a){
+  const d=diasParaAval(a), u=ultimaAval(a);
+  if(d===null)return {txt:"lembrete desligado",cls:"off"};
+  if(isNaN(d))return {txt:"nunca avaliado",cls:"venc"};
+  if(d<0)return {txt:`atrasada há ${-d} dia${-d>1?"s":""}`,cls:"venc",u};
+  if(d===0)return {txt:"é hoje",cls:"venc",u};
+  if(d<=7)return {txt:`em ${d} dia${d>1?"s":""}`,cls:"perto",u};
+  return {txt:`em ${d} dias`,cls:"",u};
+}
+function abrirAvaliacoes(){
+  const old=document.getElementById("avModal");if(old)old.remove();
+  const ov=document.createElement("div");ov.id="avModal";ov.className="modal";
+  ov.innerHTML=`<div class="modalbox">
+    <h3>📸 Avaliações funcionais</h3>
+    <div class="modalsub">A cada ${AVAL_SEMANAS} semanas por padrão — é também quando você troca o treino. As fotos ficam na sua galeria; aqui fica o controle das datas.</div>
+    <div class="implist" id="avLista"></div>
+    <div class="modalfoot"><span></span><span class="modalbtns"><button id="avClose">fechar</button></span></div>
+  </div>`;
+  document.body.appendChild(ov);
+  const fechar=()=>{ov.remove();render()};
+  ov.querySelector("#avClose").onclick=fechar;
+  ov.onclick=e=>{if(e.target===ov)fechar()};
+  function ordem(x){const d=diasParaAval(x);return d===null?9999:(isNaN(d)?-9999:d)}
+  function pintar(){
+    const alunos=DB.alunos.filter(a=>a.ativo!==false).sort((x,y)=>ordem(x)-ordem(y));
+    const lista=ov.querySelector("#avLista");
+    if(!alunos.length){lista.innerHTML=`<div class="empty" style="padding:18px 12px">Nenhum aluno ativo.</div>`;return}
+    lista.innerHTML=alunos.map(a=>{
+      const s=statusAval(a), n=listaAval(a).length;
+      return `<div class="avrow" data-id="${a.id}">
+        <div class="avinfo"><div class="avnome">${esc(a.nome)}</div>
+          <div class="avsub"><span class="avstatus ${s.cls}">${s.txt}</span>
+            ${s.u?` · última em ${labelData(s.u.d)}`:""}${n?` · ${n} no total`:""}</div></div>
+        <button class="avbtn">registrar hoje</button></div>`;
+    }).join("");
+    lista.querySelectorAll(".avrow").forEach(row=>{
+      const a=DB.alunos.find(x=>x.id===row.dataset.id);
+      row.querySelector(".avbtn").onclick=()=>{
+        if(registrarAval(a,hojeStr())){saveDB();pintar()}
+        else alert("Já existe uma avaliação registrada hoje para "+a.nome+".");
+      };
+    });
+  }
+  pintar();
+}
+
+/* ── cobranças: o que cobrar agora, com a conta explícita ── */
+function textoCobranca(a,cob){
+  const nome=String(a.nome).trim().split(/\s+/)[0];
+  const [Y,M]=cob.ym.split("-").map(Number);
+  const ref=MESES[M-1]+"/"+Y;
+  let s=`Oi, ${nome}! Segue o valor de ${ref} (vence ${labelData(cob.venc)}):\n\n`;
+  s+=`${a.tipo==="mensal"?"Mensalidade":cob.c.cobraveis+" aula(s)"}: ${fmtRS(cob.bruto)}\n`;
+  if(cob.credito>0){
+    s+=`Desconto de ${cob.origem.length} falta(s) não cobrada(s)`;
+    if(cob.origem.length)s+=` (${cob.origem.slice(0,4).map(o=>labelData(o.ds)).join(", ")})`;
+    s+=`: -${fmtRS(cob.credito)}\n`;
+  }
+  s+=`\nTotal: ${fmtRS(cob.aCobrar)}`;
+  return s+`\n\nQualquer dúvida me chama! 💪`;
+}
+function abrirCobrancas(){
+  const old=document.getElementById("cbModal");if(old)old.remove();
+  const ov=document.createElement("div");ov.id="cbModal";ov.className="modal";
+  ov.innerHTML=`<div class="modalbox">
+    <h3>🧾 Cobranças</h3>
+    <div class="modalsub">O que cobrar agora de cada aluno, já com o desconto das faltas que você não cobrou. Registre o pagamento pra saber sempre o que ficou pra trás.</div>
+    <div class="implist" id="cbLista"></div>
+    <div class="modalfoot"><span id="cbResumo"></span>
+      <span class="modalbtns"><button id="cbClose">fechar</button></span></div>
+  </div>`;
+  document.body.appendChild(ov);
+  const fechar=()=>{ov.remove();render()};
+  ov.querySelector("#cbClose").onclick=fechar;
+  ov.onclick=e=>{if(e.target===ov)fechar()};
+  function pintar(){
+    const linhas=DB.alunos.filter(a=>a.ativo!==false).map(a=>({a,cob:proximaCobranca(a)})).filter(x=>x.cob);
+    const lista=ov.querySelector("#cbLista");
+    const tot=linhas.reduce((s,x)=>s+x.cob.aCobrar,0);
+    ov.querySelector("#cbResumo").textContent=linhas.length?`${linhas.length} a cobrar · ${fmtRS(tot)}`:"nada a cobrar ✓";
+    if(!linhas.length){lista.innerHTML=`<div class="empty" style="padding:18px 12px">Nenhuma cobrança em aberto. 🎉</div>`;return}
+    lista.innerHTML=linhas.map(({a,cob})=>{
+      const [Y,M]=cob.ym.split("-").map(Number);
+      const atrasado=cob.venc<hojeStr();
+      return `<div class="cbrow" data-id="${a.id}">
+        <div class="cbtop"><span class="cbnome">${esc(a.nome)}</span>
+          <span class="chip">${regimeDe(a)==="adiantado"?"paga adiantado":"paga vencido"}</span>
+          <span class="cbtotal">${fmtRS(cob.aCobrar)}</span></div>
+        <div class="cbdet">referente a <b>${MESES[M-1]}/${Y}</b> · vence ${labelData(cob.venc)}
+          ${atrasado?'<span class="cbatraso">atrasado</span>':""}
+          ${cob.emAberto>1?` · <span class="cbatraso">${cob.emAberto} meses em aberto</span>`:""}</div>
+        <div class="cbconta">${a.tipo==="mensal"?"mensalidade":cob.c.cobraveis+" aula(s)"}: ${fmtRS(cob.bruto)}${
+          cob.c.proRata?` <span class="cbnota">(proporcional: ${cob.c.proRata.previstas} de ${cob.c.proRata.cheias} aulas)</span>`:""}
+          ${cob.credito>0?`<br><span class="cbcred">− crédito de ${cob.origem.length} falta(s) não cobrada(s)${cob.origem.length?" ("+cob.origem.slice(0,4).map(o=>labelData(o.ds)).join(", ")+")":""}: ${fmtRS(cob.credito)}</span>`:""}
+        </div>
+        <div class="cbacoes"><button class="cbcopy">📋 copiar cobrança</button>
+          <button class="cbpago">✓ recebi ${fmtRS(cob.aCobrar)}</button></div>
+      </div>`;
+    }).join("");
+    lista.querySelectorAll(".cbrow").forEach(row=>{
+      const a=DB.alunos.find(x=>x.id===row.dataset.id), cob=proximaCobranca(a);
+      row.querySelector(".cbcopy").onclick=e=>copiar(textoCobranca(a,cob),e.currentTarget);
+      row.querySelector(".cbpago").onclick=()=>{
+        DB.pag[cob.ym+"_"+a.id]={v:cob.aCobrar,d:hojeStr()};
+        saveDB();pintar();
+      };
+    });
+  }
+  pintar();
+}
+
 function gerarExport(dados,tTotal,tPago){
   const[Y,M]=mesAtual.split("-").map(Number);
   let s=`[PERSONAL-FECHAMENTO ${mesAtual}] — ${MESES[M-1]}/${Y}\n`;
@@ -807,10 +1195,57 @@ function gerarExport(dados,tTotal,tPago){
   return s;
 }
 
+/* ─────────── ponte para o app Patrimônio (financas/index.html) ───────────
+   Monta um pacote com a receita do mês POR ALUNO (marcando quem já pagou)
+   e os custos do mês. O app Patrimônio importa isso e vira lançamento.
+   Cada linha leva um `src` único: reimportar o mesmo mês ATUALIZA os
+   valores em vez de duplicar — mesmo padrão do dedup da fatura. */
+function payloadPatrimonio(ym){
+  const receitas=DB.alunos.map(a=>{
+    const c=calcMes(a,ym);
+    return {aluno:a.nome, valor:c.total, pago:!!DB.pag[ym+"_"+a.id], src:"aulas|"+ym+"|aluno|"+a.id};
+  }).filter(r=>r.valor>0);
+  const cst=custosMesCalc(ym);
+  const custos=[].concat(
+    cst.fixos.map(c=>({nome:c.nome, valor:+c.valor||0, fixo:true,  src:"aulas|"+ym+"|cf|"+c.id})),
+    cst.avulsos.map(c=>({nome:c.nome, valor:+c.valor||0, fixo:false, src:"aulas|"+ym+"|ca|"+c.id}))
+  ).filter(c=>c.valor>0);
+  return {tipo:"AULAS-RECEITA", versao:1, mes:ym, gerado:hojeStr(), receitas, custos};
+}
+
+function abrirExportPatrimonio(){
+  const old=document.getElementById("expPatModal");if(old)old.remove();
+  const p=payloadPatrimonio(mesAtual);
+  const pagos=p.receitas.filter(r=>r.pago);
+  const tPago=pagos.reduce((s,r)=>s+r.valor,0);
+  const tTodos=p.receitas.reduce((s,r)=>s+r.valor,0);
+  const[Y,M]=mesAtual.split("-").map(Number);
+
+  const ov=document.createElement("div");ov.id="expPatModal";ov.className="modal";
+  ov.innerHTML=`<div class="modalbox">
+    <h3>💸 Receita de ${MESES[M-1]}/${Y} pro Patrimônio</h3>
+    <div class="modalsub">Copie o texto e cole no app Patrimônio, em <b>Lançar → Importar aulas</b>. Lá você escolhe o que entra.</div>
+    <div class="implist" style="padding:12px">
+      <div class="trfsec">${pagos.length} de ${p.receitas.length} aluno(s) já marcados como PAGO · ${fmtRS(tPago)} recebido de ${fmtRS(tTodos)} previsto · ${p.custos.length} custo(s)</div>
+      <textarea id="expPatOut" readonly>${esc(JSON.stringify(p))}</textarea>
+      <button id="expPatCopy" class="trfbtn">📋 copiar</button>
+      <div class="finhint" style="margin-top:10px">Só quem está marcado como <b>PAGO</b> vem pré-selecionado lá — é o dinheiro que realmente entrou. Marque os pagamentos na aba Mês antes de exportar.</div>
+    </div>
+    <div class="modalfoot"><span></span><span class="modalbtns"><button id="expPatClose">fechar</button></span></div>
+  </div>`;
+  document.body.appendChild(ov);
+  ov.querySelector("#expPatClose").onclick=()=>ov.remove();
+  ov.onclick=e=>{if(e.target===ov)ov.remove()};
+  ov.querySelector("#expPatCopy").onclick=e=>{
+    const ta=ov.querySelector("#expPatOut");ta.select();
+    copiar(ta.value,e.currentTarget);
+  };
+}
+
 /* ───────────────── FINANCEIRO ───────────────── */
 function addMesYm(ym,n){let[Y,M]=ym.split("-").map(Number);M+=n;while(M<1){M+=12;Y--}while(M>12){M-=12;Y++}return Y+"-"+pad(M)}
 function receitaMes(ym){return DB.alunos.reduce((s,a)=>s+calcMes(a,ym).total,0)}
-function recebidoMes(ym){return DB.alunos.reduce((s,a)=>s+(DB.pag[ym+"_"+a.id]?calcMes(a,ym).total:0),0)}
+function recebidoMes(ym){return DB.alunos.reduce((s,a)=>{const p=pagoDe(a,ym);return s+(p===null?0:p)},0)}
 function custosMesCalc(ym){
   const fixos=(DB.custosFixos||[]).filter(c=>ym>=(c.desde||"0000-00"));
   const avulsos=(DB.custosMes&&DB.custosMes[ym])||[];
@@ -1104,6 +1539,13 @@ function renderFinanceiro(){
   el.insertAdjacentHTML("beforeend",`<input type="file" id="impFile" style="display:none"><div class="finhint" style="margin-top:0">Baixe a fatura do app do banco (CSV ou OFX) e solte aqui. É lido só no seu navegador — nada é enviado.</div>`);
   el.querySelector("#impFile").onchange=lerFaturaFile;
 
+  // ── enviar receita pro app Patrimônio ──
+  const expP=document.createElement("button");expP.className="importbtn";
+  expP.textContent="💸 Enviar receita do mês pro app Patrimônio";
+  expP.onclick=abrirExportPatrimonio;
+  el.appendChild(expP);
+  el.insertAdjacentHTML("beforeend",`<div class="finhint" style="margin-top:0">Gera um texto pra colar no app Patrimônio, em vez de redigitar aluno por aluno lá.</div>`);
+
   // ── comparação mês a mês (interativo) ──
   el.insertAdjacentHTML("beforeend",`<div class="exhead">Receita × custos mês a mês</div>`);
   renderCaixaChart(el);
@@ -1138,6 +1580,22 @@ function renderAlunos(){
       <input id="fFranquia" type="number" min="0" step="1" value="${ed?franquiaDe(ed):FRANQUIA_PADRAO}" style="width:80px">
       <span class="flabel" style="margin:0">acima disso, começa a cobrar</span>
     </div>
+    <div class="frow" style="align-items:center">
+      <label class="flabel" style="margin:0">🧾 Paga</label>
+      <select id="fRegime">
+        <option value="vencido"${!ed||regimeDe(ed)==="vencido"?" selected":""}>depois — mês que já fez</option>
+        <option value="adiantado"${ed&&regimeDe(ed)==="adiantado"?" selected":""}>adiantado — mês que vai fazer</option>
+      </select>
+      <span class="flabel" style="margin:0">vence dia</span>
+      <input id="fVenc" type="number" min="1" max="28" value="${ed?vencDe(ed):5}" style="width:64px">
+    </div>
+    <div class="frow" style="align-items:center">
+      <label class="flabel" style="margin:0">📸 Avaliação a cada</label>
+      <input id="fAval" type="number" min="0" max="52" value="${ed?intervaloAval(ed):AVAL_SEMANAS}" style="width:64px">
+      <span class="flabel" style="margin:0">semanas (0 desliga o lembrete)</span>
+    </div>
+    <label class="flabel checkline"><input type="checkbox" id="fProRata"${!ed||ed.proRata!==false?" checked":""}>
+      Cobrar <b>proporcional</b> quando o mês for parcial (mensalista que entra ou sai no meio do mês)</label>
     <label class="flabel">Dias e horários da semana</label>
     <div id="fHorarios"></div>
     <button type="button" class="addhora" id="fAddHora">+ adicionar dia/horário</button>
@@ -1186,7 +1644,11 @@ function renderAlunos(){
     const desde=f.querySelector("#fDesde").value||primeiroDoMes();
     const fq=f.querySelector("#fFranquia").value;
     const franquia=fq===""?FRANQUIA_PADRAO:Math.max(0,Math.floor(Number(fq)||0));
-    const dados={nome,valor,tipo:f.querySelector("#fTipo").value,horarios,dias,desde,franquia};
+    const dados={nome,valor,tipo:f.querySelector("#fTipo").value,horarios,dias,desde,franquia,
+      regime:f.querySelector("#fRegime").value==="adiantado"?"adiantado":"vencido",
+      diaVenc:Math.min(28,Math.max(1,Number(f.querySelector("#fVenc").value)||5)),
+      intervaloAval:Math.max(0,Math.min(52,Number(f.querySelector("#fAval").value)||0)),
+      proRata:f.querySelector("#fProRata").checked};
     if(ed)Object.assign(ed,dados);
     else DB.alunos.push(Object.assign({id:"a"+Date.now().toString(36),ativo:true,ate:null,cadastro:hojeStr()},dados));
     editandoAluno=null;formHorarios=null;
@@ -1199,7 +1661,8 @@ function renderAlunos(){
     const agenda=a.dias.length?a.dias.map(i=>DSEM[i]+(a.horarios&&a.horarios[i]?" "+a.horarios[i]:"")).join(" · "):"🔁 avulso (sem dia fixo)";
     card.innerHTML=`<div class="info"><div class="nm">${esc(a.nome)}${a.ativo===false?" · <span style='color:var(--dim)'>pausado</span>":""}</div>
       <div class="dt2">${agenda} ·
-        ${a.tipo==="mensal"?"mensal "+fmtRS(a.valor):fmtRS(a.valor)+"/aula"} · 🎁 ${franquiaDe(a)} faltas grátis/ano · desde ${labelData(a.desde)}</div></div>
+        ${a.tipo==="mensal"?"mensal "+fmtRS(a.valor):fmtRS(a.valor)+"/aula"} · 🎁 ${franquiaDe(a)} faltas grátis/ano · desde ${labelData(a.desde)}</div>
+      <div class="dt2">🧾 paga ${regimeDe(a)==="adiantado"?"adiantado":"vencido"}, dia ${vencDe(a)} · 📸 ${statusAval(a).txt}</div></div>
       <button class="bEd">editar</button>
       <button class="bPause">${a.ativo===false?"reativar":"pausar"}</button>
       <button class="bDel">excluir</button>`;
@@ -1274,6 +1737,19 @@ function render(){
   else renderAlunos();
   refreshSandbox();
 }
+
+/* migração adiada: "pago: sim" antigo vira "pago: R$ X" (precisa de calcMes) */
+if(_migrarPag){
+  Object.keys(DB.pag).forEach(k=>{
+    if(DB.pag[k]===true){
+      const ym=k.slice(0,7), id=k.slice(8);
+      const a=DB.alunos.find(x=>x.id===id);
+      DB.pag[k]={v:a?calcMes(a,ym).total:0,d:null};
+    }
+  });
+}
+if(_migrou)saveDB(); // persiste as migrações uma vez
+
 render();
 </script>
 <script>

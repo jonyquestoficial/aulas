@@ -6,11 +6,11 @@
       você marca presença na academia mesmo sem sinal.
 
    PARA PUBLICAR UMA ATUALIZAÇÃO:
-   troque o número da versão abaixo (aulas-v2 → aulas-v3).
+   troque o número da versão abaixo (aulas-v4 → aulas-v5).
    Sem isso, o iPhone continua abrindo a versão antiga.
    ================================================================ */
 
-const VERSAO_CACHE = 'aulas-v2';
+const VERSAO_CACHE = 'aulas-v4';
 
 /* O index.html é ESSENCIAL (é o app inteiro num arquivo só).
    Os outros são desejáveis, mas se faltarem o app ainda funciona. */
