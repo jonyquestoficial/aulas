@@ -1,0 +1,1324 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Aulas</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Aulas">
+<meta name="theme-color" content="#0f1115">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Controle de Aulas","short_name":"Aulas","display":"standalone","start_url":".","background_color":"%230f1115","theme_color":"%230f1115","icons":[{"src":"icon-180.png","sizes":"180x180","type":"image/png"}]}'>
+<style>
+  :root{
+    --bg:#0f1115; --card:#1a1d24; --card2:#20242d; --ink:#e8eaed; --dim:#9aa0aa;
+    --line:#2a2f3a; --accent:#6ea8fe; --ok:#3ecf8e; --no:#ff8080; --warn:#f5b84f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.45;-webkit-tap-highlight-color:transparent;
+    padding:calc(18px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right))
+            calc(60px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left))}
+  .wrap{max-width:720px;margin:0 auto}
+  h1{font-size:21px;margin:0 0 2px}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:14px}
+  button{font-family:inherit}
+
+  /* tabs */
+  .tabs{display:flex;gap:6px;margin-bottom:18px;position:sticky;top:calc(-1px - env(safe-area-inset-top));background:var(--bg);padding:8px 0;z-index:5}
+  .tabs button{flex:1;background:var(--card);color:var(--dim);border:1px solid var(--line);
+    padding:10px 6px;border-radius:10px;font-size:14px;cursor:pointer;position:relative}
+  .tabs button.active{background:var(--card2);color:var(--ink);border-color:#3a4150;font-weight:600}
+  .tabs .badge{position:absolute;top:-6px;right:-4px;background:var(--warn);color:#1a1400;
+    border-radius:99px;font-size:11px;font-weight:700;padding:1px 7px}
+
+  .note{font-size:12px;color:var(--dim);background:var(--card);border:1px solid var(--line);
+    border-radius:9px;padding:9px 12px;margin-bottom:14px}
+  .alertbox{font-size:13px;background:rgba(245,184,79,.08);border:1px solid rgba(245,184,79,.4);
+    border-radius:10px;padding:10px 13px;margin-bottom:14px;color:var(--warn)}
+  .alertbox a{color:var(--warn);font-weight:600;cursor:pointer;text-decoration:underline}
+  .backupbar{align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    font-size:12px;color:var(--dim);background:var(--card);border:1px solid var(--line);
+    border-radius:9px;padding:8px 12px;margin-bottom:14px}
+  .backupbar.stale{border-color:rgba(245,184,79,.5);color:var(--warn);background:rgba(245,184,79,.06)}
+  .backupbar.novo{border-color:var(--accent);background:rgba(110,168,254,.08);color:var(--ink);font-size:13px}
+  .backupbar.novo #bkRestore{color:var(--accent);border-color:var(--accent);font-weight:600}
+  .backupbar .bkbtns{display:flex;gap:6px}
+  .backupbar button{background:var(--card2);color:var(--ink);border:1px solid var(--line);
+    border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer;min-height:34px}
+  .backupbar.stale #bkNow{color:var(--warn);border-color:var(--warn)}
+  .backupbar .ghost{color:var(--dim)}
+
+  /* nav de dia / mês */
+  .nav{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+  .nav .arrow{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;
+    width:38px;height:38px;font-size:16px;cursor:pointer}
+  .nav .label{flex:1;font-size:16px;font-weight:600;text-align:center;min-width:150px;text-transform:capitalize}
+  .nav .today,.nav input[type=date]{background:var(--card);color:var(--dim);border:1px solid var(--line);
+    border-radius:9px;padding:8px 10px;font-size:13px;cursor:pointer}
+  .nav input[type=date]{color-scheme:dark}
+
+  /* cards de aula (dia) */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:13px 15px;margin-bottom:10px}
+  .card.fez{border-color:rgba(62,207,142,.55)}
+  .card.nao{border-color:rgba(255,128,128,.45)}
+  .chead{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .cname{font-weight:600;font-size:16px}
+  .chip{display:inline-block;background:var(--card2);border:1px solid var(--line);border-radius:99px;
+    padding:1px 9px;font-size:11px;color:var(--dim)}
+  .chip.ok{color:var(--ok);border-color:rgba(62,207,142,.4)}
+  .chip.no{color:var(--no);border-color:rgba(255,128,128,.4)}
+  .chip.warn{color:var(--warn);border-color:rgba(245,184,79,.4)}
+  .chip.semhora{color:var(--warn);border-color:rgba(245,184,79,.4);border-style:dashed}
+  .cbtns{display:flex;gap:8px;margin-top:11px}
+  .cbtns button{flex:1;padding:12px 6px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;
+    background:var(--card2);color:var(--dim);border:1px solid var(--line);transition:.12s}
+  .cbtns .bfez.on{background:rgba(62,207,142,.14);color:var(--ok);border-color:var(--ok)}
+  .cbtns .bnao.on{background:rgba(255,128,128,.12);color:var(--no);border-color:var(--no)}
+  .naoblock{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .naoblock select,.naoblock input[type=text]{background:var(--card2);color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:9px 10px;font-size:13px;flex:1;min-width:150px}
+  .franqline{font-size:12px;color:var(--dim);margin-top:9px}
+  .franqline .over{color:var(--warn);font-weight:600}
+  .cobrar{border-radius:99px;padding:8px 14px;font-size:13px;cursor:pointer;font-weight:600;
+    background:var(--card2);border:1px solid var(--line);color:var(--dim)}
+  .cobrar.sim{color:var(--ok);border-color:var(--ok);background:rgba(62,207,142,.1)}
+  .clear{background:none;border:0;color:var(--dim);font-size:12px;cursor:pointer;margin-top:8px;padding:0;text-decoration:underline}
+  .empty{color:var(--dim);font-style:italic;padding:18px 4px}
+
+  /* extras */
+  .exhead{font-size:13px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;
+    border-bottom:1px solid var(--line);padding-bottom:6px;margin:22px 0 12px}
+  .addextra{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}
+  .addextra select{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;
+    padding:9px 10px;font-size:13px;flex:1;min-width:140px}
+  .addextra button{background:var(--card);color:var(--accent);border:1px solid var(--line);border-radius:9px;
+    padding:9px 14px;font-size:13px;cursor:pointer}
+  .xdel{background:none;border:0;color:var(--dim);cursor:pointer;font-size:13px}
+
+  /* mês */
+  .resumo{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .stat{flex:1;min-width:130px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 14px}
+  .stat .v{font-size:19px;font-weight:700}
+  .stat .k{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
+  .stat.ok .v{color:var(--ok)} .stat.warn .v{color:var(--warn)}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px}
+  .mtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .mname{font-weight:600;font-size:15px;flex:1}
+  .mtotal{font-weight:700;font-size:16px}
+  .pago{border-radius:99px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;
+    background:var(--card2);border:1px solid var(--line);color:var(--dim)}
+  .pago.sim{color:var(--ok);border-color:var(--ok);background:rgba(62,207,142,.1)}
+  .mrow{font-size:13px;color:var(--dim);margin-top:6px}
+  .mrow b{color:var(--ink)}
+  .mdet{font-size:12px;color:var(--dim);margin-top:5px}
+  .mdet .dt{color:var(--no)} .mdet .dtok{color:var(--dim)}
+  .mtools{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+  .mtools button{background:var(--card);color:var(--dim);border:1px solid var(--line);border-radius:9px;
+    padding:9px 13px;font-size:13px;cursor:pointer}
+  #exportBox{display:none;width:100%;height:200px;margin-top:10px;background:var(--card);color:var(--ink);
+    border:1px solid var(--line);border-radius:9px;padding:10px;font-size:12px;
+    font-family:ui-monospace,Consolas,monospace}
+
+  /* alunos */
+  .aform{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;margin-bottom:18px}
+  .aform h3{margin:0 0 10px;font-size:15px}
+  .frow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .frow input,.frow select{background:var(--card2);color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:9px 11px;font-size:14px}
+  .frow input[type=time]{color-scheme:dark}
+  .frow .grow{flex:1;min-width:150px}
+  .flabel{font-size:13px;color:var(--dim);display:block;margin:2px 0 9px}
+  .hrow{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+  .hrow select,.hrow input[type=time]{background:var(--card2);color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px;font-size:14px;min-height:42px}
+  .hrow select{flex:1;min-width:110px}
+  .hrow input[type=time]{width:130px;color-scheme:dark}
+  .hrow .hdel{background:none;border:0;color:var(--dim);cursor:pointer;font-size:17px;padding:4px 6px;min-height:42px}
+  .addhora{background:var(--card2);color:var(--accent);border:1px dashed #3a4150;border-radius:9px;
+    padding:10px 14px;font-size:13px;cursor:pointer}
+  .hint{font-size:12px;color:var(--dim);margin-top:9px;line-height:1.5}
+  .aform .save{background:rgba(110,168,254,.12);color:var(--accent);border:1px solid var(--accent);
+    border-radius:9px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer}
+  .aform .cancel{background:none;border:0;color:var(--dim);cursor:pointer;font-size:13px;text-decoration:underline}
+  .acard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 15px;
+    margin-bottom:9px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .acard.inativo{opacity:.5}
+  .acard .info{flex:1;min-width:180px}
+  .acard .nm{font-weight:600}
+  .acard .dt2{font-size:12px;color:var(--dim)}
+  .acard button{background:var(--card2);color:var(--dim);border:1px solid var(--line);border-radius:8px;
+    padding:6px 11px;font-size:12px;cursor:pointer}
+
+  /* financeiro */
+  .finhint{font-size:12px;color:var(--dim);margin:-4px 0 16px}
+  .fbar{margin:4px 0 22px}
+  .fbrow{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+  .fblbl{width:64px;font-size:13px;color:var(--dim);flex:0 0 auto}
+  .fbtrack{flex:1;height:14px;background:var(--card2);border-radius:99px;overflow:hidden}
+  .fbtrack>i{display:block;height:100%;border-radius:99px;transition:width .3s}
+  .fbval{width:96px;text-align:right;font-size:13px;font-weight:600;flex:0 0 auto}
+  .costrow{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);
+    border-radius:10px;padding:10px 13px;margin-bottom:8px}
+  .costrow .cnome{flex:1;font-size:14px;min-width:0;word-break:break-word}
+  .costrow .cval{font-weight:600;font-size:14px;flex:0 0 auto}
+  .costrow .cdel{background:none;border:0;color:var(--dim);cursor:pointer;font-size:15px;padding:4px 6px;flex:0 0 auto}
+  .addcost{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+  .addcost .cin-nome{flex:1;min-width:150px;background:var(--card);color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 12px;font-size:14px}
+  .addcost .cin-val{width:96px;background:var(--card);color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 12px;font-size:14px}
+  .addcost .cadd{background:var(--card);color:var(--accent);border:1px solid var(--line);
+    border-radius:9px;padding:10px 14px;font-size:13px;cursor:pointer}
+  .chartcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 12px 10px}
+  .chartwrap{overflow-x:auto}
+  .chartlegrow{display:flex;gap:14px;align-items:center;margin-bottom:8px;font-size:12px;color:var(--dim)}
+  .cleg{display:flex;align-items:center;gap:5px}
+  .cleg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .charttip{margin-top:8px;font-size:12px;color:var(--dim);border-top:1px solid var(--line);padding-top:8px;min-height:18px}
+  .caixachart .gbar{transform-box:fill-box;transform-origin:bottom;animation:growbar .5s ease both}
+  @keyframes growbar{from{opacity:.25;transform:scaleY(.9)}to{opacity:1;transform:scaleY(1)}}
+  .caixachart .gbargroup{cursor:pointer}
+  @media(prefers-reduced-motion:reduce){.caixachart .gbar{animation:none}}
+  .gaugerow{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:18px}
+  .gaugebox{flex:0 0 auto;line-height:0}
+  .gaugemsg{font-size:13px;color:var(--ink);line-height:1.5}
+  .faltaspanel{background:rgba(245,184,79,.06);border:1px solid rgba(245,184,79,.4);border-radius:12px;padding:12px 14px;margin-bottom:16px}
+  .fphead{font-size:12px;font-weight:700;color:var(--warn);margin-bottom:9px;text-transform:uppercase;letter-spacing:.05em}
+  .fprow{margin-bottom:8px;line-height:2}
+  .fpnome{font-weight:600;font-size:14px;margin-right:4px}
+  .fchip{display:inline-block;border-radius:99px;padding:2px 9px;font-size:12px;border:1px solid var(--line);white-space:nowrap}
+  .fchip.fperdoa{color:var(--dim)}
+  .fchip.fcobra{color:var(--warn);border-color:rgba(245,184,79,.5);background:rgba(245,184,79,.1)}
+  .fchip.fsem{color:var(--no);border-color:rgba(255,128,128,.5);background:rgba(255,128,128,.08)}
+  .fphint{font-size:11px;color:var(--dim);margin-top:6px}
+  .bigbtn{width:100%;background:rgba(245,184,79,.1);color:var(--warn);border:1px solid rgba(245,184,79,.5);
+    border-radius:11px;padding:14px;font-size:14px;font-weight:600;cursor:pointer;margin:18px 0 12px}
+  .relblk{border-bottom:1px solid var(--line);padding:11px 12px}
+  .relblk:last-child{border-bottom:0}
+  .relnome{font-weight:600;font-size:14px;margin-bottom:7px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .relcount{font-size:11px;color:var(--dim);font-weight:400}
+  .relitem{display:flex;align-items:center;gap:9px;font-size:13px;padding:4px 0;color:var(--dim)}
+  .relitem .reldt{color:var(--ink);flex:0 0 auto;width:44px}
+  .relitem .relmot{flex:1;min-width:0}
+  .relbadge{font-size:11px;flex:0 0 auto;color:var(--warn)}
+  .relbadge.free{color:var(--dim)}
+  .relfranq{font-size:11px;color:var(--dim);margin-top:7px}
+  .relsem{font-size:12px;color:var(--dim);padding:11px 12px;border-top:1px solid var(--line)}
+  .trfsec{font-size:13px;color:var(--ink);margin-bottom:7px}
+  #trfModal textarea{width:100%;height:88px;background:var(--card2);color:var(--dim);border:1px solid var(--line);
+    border-radius:9px;padding:9px;font-size:11px;font-family:ui-monospace,Consolas,monospace;resize:vertical}
+  #trfModal #trfIn{color:var(--ink)}
+  .trfbtn{width:100%;margin-top:7px;background:var(--card2);color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:11px;font-size:13px;cursor:pointer}
+  .trfbtn.ok{color:var(--accent);border-color:var(--accent);background:rgba(110,168,254,.1);font-weight:600}
+  .mactions{margin-top:11px;display:flex;justify-content:flex-end}
+  .aviso{background:var(--card2);color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:8px 13px;font-size:12px;cursor:pointer}
+  .importbtn{background:var(--card);color:var(--accent);border:1px dashed #3a4150;border-radius:9px;
+    padding:12px 14px;font-size:13px;cursor:pointer;width:100%;margin:18px 0 4px}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;z-index:50}
+  .modalbox{background:var(--bg);border:1px solid var(--line);border-radius:16px 16px 0 0;width:100%;
+    max-width:640px;max-height:88vh;display:flex;flex-direction:column;padding:18px 16px 14px}
+  @media(min-width:600px){.modal{align-items:center;padding:20px}.modalbox{border-radius:16px}}
+  .modalbox h3{margin:0 0 4px;font-size:17px}
+  .modalsub{font-size:12px;color:var(--dim);margin-bottom:12px;line-height:1.5}
+  .modalbox button{font-family:inherit;cursor:pointer;border-radius:9px;font-size:13px;padding:9px 14px;
+    border:1px solid var(--line);background:var(--card2);color:var(--ink)}
+  .imptools{display:flex;gap:8px;margin-bottom:8px}
+  .imptools button{background:none;border:0;color:var(--dim);padding:4px 4px;font-size:12px;text-decoration:underline}
+  .implist{overflow-y:auto;flex:1;border:1px solid var(--line);border-radius:10px}
+  .improw{display:flex;align-items:center;gap:10px;padding:9px 11px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px}
+  .improw:last-child{border-bottom:0}
+  .improw input{width:18px;height:18px;flex:0 0 auto;accent-color:var(--accent)}
+  .impdt{color:var(--dim);flex:0 0 auto;width:42px}
+  .impdesc{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .impval{font-weight:600;flex:0 0 auto}
+  .modalfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;flex-wrap:wrap}
+  #impResumo{font-size:13px;color:var(--dim)}
+  .modalbtns{display:flex;gap:8px}
+  #impOk{background:rgba(110,168,254,.14);color:var(--accent);border-color:var(--accent);font-weight:600}
+  .offstatus{font-size:12px;border-radius:9px;padding:9px 12px;margin-top:22px;
+    border:1px solid var(--line);background:var(--card);color:var(--dim)}
+  .offstatus.ok{border-color:rgba(62,207,142,.45);background:rgba(62,207,142,.08);color:var(--ok)}
+  .offstatus.nao{border-color:rgba(245,184,79,.5);background:rgba(245,184,79,.07);color:var(--warn)}
+  .foot{color:var(--dim);font-size:12px;margin-top:16px;border-top:1px solid var(--line);padding-top:13px}
+  button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🏋️ Controle de Aulas</h1>
+  <div class="sub">Marque no dia, feche o mês sem dor de cabeça. Tudo fica salvo no seu navegador.</div>
+  <div class="note" id="sandboxNote" style="display:none">⚠️ Este navegador está bloqueando o armazenamento, então as marcações <b>não vão salvar</b>. No iPhone: Ajustes → Safari → desligue “Bloquear todos os cookies” e evite a Navegação Privada.</div>
+  <div class="backupbar" id="backupbar" style="display:none"></div>
+
+  <div class="tabs">
+    <button id="tabDia" class="active">📋 Hoje<span class="badge" id="pendBadge" style="display:none"></span></button>
+    <button id="tabMes">💰 Mês</button>
+    <button id="tabFin">📊 Caixa</button>
+    <button id="tabAlunos">👥 Alunos</button>
+  </div>
+
+  <div id="viewDia"></div>
+  <div id="viewMes" style="display:none"></div>
+  <div id="viewFin" style="display:none"></div>
+  <div id="viewAlunos" style="display:none"></div>
+
+  <div id="offstatus" class="offstatus">📴 verificando modo offline…</div>
+
+  <div class="foot">
+    💡 Se o aluno <b>não fez</b>, escolha o motivo — a página sugere se cobra ou não, e você pode inverter tocando no botão <b>💰</b>.
+    Faça um <b>backup</b> (aba Mês) de vez em quando: se trocar de navegador ou mover o arquivo, é ele que restaura tudo.
+  </div>
+</div>
+
+<script>
+/* ───────────────── dados ───────────────── */
+const KEY="personal_aulas_v1";
+let storageOK=true;
+const DEFAULTS=()=>({alunos:[],reg:{},extras:[],pag:{},custosFixos:[],custosMes:{},lastBackup:null,v:3});
+// migra alunos antigos (hora única + dias[]) para horarios{dia:hora}
+function migrate(db){
+  (db.alunos||[]).forEach(a=>{
+    if(!a.horarios||typeof a.horarios!=="object"){
+      a.horarios={};
+      (a.dias||[]).forEach(d=>{a.horarios[d]=a.hora||""});
+    }
+    a.dias=Object.keys(a.horarios).map(Number).sort((x,y)=>x-y);
+    delete a.hora;
+  });
+  return db;
+}
+let _migrou=false;
+function loadDB(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(KEY)||"{}");
+    const rawV=raw.v||0;
+    const db=migrate(Object.assign(DEFAULTS(),raw));
+    // v<2: alunos antigos começavam no dia do cadastro; recua o início pro 1º do mês
+    // (assim o mês já conta os dias anteriores ao cadastro). Roda uma vez só.
+    if(rawV<2){
+      (db.alunos||[]).forEach(a=>{if(a.desde)a.desde=a.desde.slice(0,7)+"-01"});
+      _migrou=true;
+    }
+    // v<3: separa 'cadastro' (quando começou a acompanhar) de 'desde' (de quando conta $).
+    // pendências só valem a partir do cadastro → dias anteriores contam no previsto sem virar alerta.
+    // (hojeStr/pad ainda não existem neste ponto do arquivo — calcula a data inline)
+    if(rawV<3){
+      const d=new Date(),hj=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+      (db.alunos||[]).forEach(a=>{if(!a.cadastro)a.cadastro=hj});
+      _migrou=true;
+    }
+    db.v=3;
+    return db;
+  }catch(e){storageOK=false;return DEFAULTS()}
+}
+function saveDB(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){storageOK=false;refreshSandbox()}}
+let DB=loadDB();
+if(_migrou)saveDB(); // persiste a migração uma vez
+function refreshSandbox(){document.getElementById("sandboxNote").style.display=storageOK?"none":"block"}
+
+// franq: consome a franquia anual de faltas grátis do aluno (falta do próprio aluno, não-cobrável)
+const MOTIVOS=[
+  {k:"cima_hora", l:"Desmarcou em cima da hora", c:true,  franq:false},
+  {k:"faltou",    l:"Faltou sem avisar",         c:true,  franq:false},
+  {k:"antec",     l:"Desmarcou com antecedência",c:false, franq:true},
+  {k:"viagem",    l:"Viagem",                    c:false, franq:true},
+  {k:"ferias",    l:"Férias",                    c:false, franq:true},
+  {k:"doenca",    l:"Doença",                    c:false, franq:true},
+  {k:"eu",        l:"Eu desmarquei",             c:false, franq:false},
+  {k:"feriado",   l:"Feriado",                   c:false, franq:false},
+  {k:"outro",     l:"Outro",                     c:false, franq:true},
+];
+const motivoLabel=k=>{const m=MOTIVOS.find(m=>m.k===k);return m?m.l:"(sem motivo)"};
+const FRANQUIA_PADRAO=30;
+// nº de faltas grátis (não-cobráveis que consomem franquia) já usadas pelo aluno no ano
+function faltasGratisAno(a,ano,exceptKey){
+  let n=0;
+  for(const k in DB.reg){
+    if(k===exceptKey)continue;
+    if(!k.endsWith("_"+a.id))continue;
+    if(k.slice(0,4)!==ano)continue;
+    const r=DB.reg[k];
+    if(r&&r.s==="nao"&&!r.c){const m=MOTIVOS.find(x=>x.k===r.m);if(m&&m.franq)n++;}
+  }
+  return n;
+}
+const franquiaDe=a=>(a.franquia==null?FRANQUIA_PADRAO:a.franquia);
+
+/* ───────────────── datas ───────────────── */
+const DSEM=["dom","seg","ter","qua","qui","sex","sáb"];
+const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+const pad=n=>String(n).padStart(2,"0");
+function ymd(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function fromYmd(s){const[a,m,d]=s.split("-").map(Number);return new Date(a,m-1,d)}
+const hojeStr=()=>ymd(new Date());
+function primeiroDoMes(){const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-01"}
+function addDias(s,n){const d=fromYmd(s);d.setDate(d.getDate()+n);return ymd(d)}
+function labelDia(s){const d=fromYmd(s);return DSEM[d.getDay()]+", "+d.getDate()+" de "+MESES[d.getMonth()]}
+function labelData(s){const d=fromYmd(s);return pad(d.getDate())+"/"+pad(d.getMonth()+1)}
+const fmtRS=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+function diasDesde(ds){if(!ds)return null;return Math.round((fromYmd(hojeStr())-fromYmd(ds))/86400000)}
+
+/* ───────────────── backup / restore ───────────────── */
+function baixarBackup(){
+  const blob=new Blob([JSON.stringify(DB,null,1)],{type:"application/json"});
+  const u=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=u;a.download="personal-aulas-backup-"+hojeStr()+".json";
+  a.click();URL.revokeObjectURL(u);
+  DB.lastBackup=hojeStr();saveDB();render();
+}
+// aplica um backup (texto JSON). devolve true se restaurou.
+function aplicarBackup(texto){
+  let nu;
+  try{nu=JSON.parse(texto);}catch(e){
+    alert("Não consegui ler esse backup — o conteúdo não está completo ou veio cortado.\n\nCopie o texto INTEIRO (do { até o }) e tente de novo.");return false;}
+  if(!nu||!Array.isArray(nu.alunos)){
+    alert("Isso não parece um backup do Controle de Aulas.");return false;}
+  const qA=nu.alunos.length, qR=Object.keys(nu.reg||{}).length;
+  if(!confirm(`Trazer estes dados para ESTE aparelho?\n\n• ${qA} aluno(s)\n• ${qR} aula(s) marcada(s)\n\nIsto substitui o que já existe aqui.`))return false;
+  DB=migrate(Object.assign(DEFAULTS(),nu));
+  saveDB();render();
+  alert(`Pronto! ${qA} aluno(s) e ${qR} aula(s) restaurados neste aparelho. ✅`);
+  return true;
+}
+function restoreFrom(e){
+  const f=e.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{aplicarBackup(rd.result)};
+  rd.onerror=()=>{alert("Não consegui abrir esse arquivo.")};
+  rd.readAsText(f);
+  e.target.value="";
+}
+/* transferência por TEXTO — alternativa ao arquivo, útil pra levar do PC ao iPhone */
+function abrirTransferencia(){
+  const old=document.getElementById("trfModal");if(old)old.remove();
+  const nA=DB.alunos.length, nR=Object.keys(DB.reg||{}).length;
+  const ov=document.createElement("div");ov.id="trfModal";ov.className="modal";
+  ov.innerHTML=`<div class="modalbox">
+    <h3>🔁 Transferir por texto</h3>
+    <div class="modalsub">Pra levar tudo de um aparelho ao outro sem mexer com arquivo. Mande o texto pra você mesmo (WhatsApp, Notas, e-mail) e cole no outro aparelho.</div>
+    <div class="implist" style="padding:12px">
+      <div class="trfsec">📤 <b>Levar deste aparelho</b> · ${nA} aluno(s), ${nR} aula(s)</div>
+      <textarea id="trfOut" readonly>${esc(JSON.stringify(DB))}</textarea>
+      <button id="trfCopy" class="trfbtn">📋 copiar tudo</button>
+      <div class="trfsec" style="margin-top:18px">📥 <b>Trazer pra este aparelho</b></div>
+      <textarea id="trfIn" placeholder="cole aqui o texto copiado do outro aparelho"></textarea>
+      <button id="trfIn2" class="trfbtn ok">restaurar aqui</button>
+    </div>
+    <div class="modalfoot"><span></span><span class="modalbtns"><button id="trfClose">fechar</button></span></div>
+  </div>`;
+  document.body.appendChild(ov);
+  ov.querySelector("#trfClose").onclick=()=>ov.remove();
+  ov.onclick=e=>{if(e.target===ov)ov.remove()};
+  ov.querySelector("#trfCopy").onclick=e=>{
+    const ta=ov.querySelector("#trfOut");ta.select();
+    copiar(ta.value,e.currentTarget);
+    DB.lastBackup=hojeStr();saveDB();
+  };
+  ov.querySelector("#trfIn2").onclick=()=>{
+    const txt=ov.querySelector("#trfIn").value.trim();
+    if(!txt){alert("Cole o texto do backup no campo de baixo primeiro.");return}
+    if(aplicarBackup(txt))ov.remove();
+  };
+}
+
+/* ───────────────── regras ───────────────── */
+function horaDoDia(a,ds){const w=fromYmd(ds).getDay();return (a.horarios&&a.horarios[w])||""}
+function isScheduled(a,ds){
+  if(!a.dias.includes(fromYmd(ds).getDay()))return false;
+  if(ds<a.desde)return false;
+  if(a.ate && ds>a.ate)return false;
+  return true;
+}
+function scheduledFor(ds){return DB.alunos.filter(a=>isScheduled(a,ds))
+  .sort((x,y)=>(horaDoDia(x,ds)||"99")<(horaDoDia(y,ds)||"99")?-1:1)}
+const rkey=(ds,id)=>ds+"_"+id;
+
+function pendencias(){
+  if(!DB.alunos.length)return [];
+  let ini=DB.alunos.reduce((m,a)=>a.desde<m?a.desde:m,hojeStr());
+  const piso=addDias(hojeStr(),-62);
+  if(ini<piso)ini=piso;
+  const out=[];
+  for(let ds=ini;ds<hojeStr();ds=addDias(ds,1)){
+    scheduledFor(ds).forEach(a=>{
+      const cad=a.cadastro||a.desde;
+      const r=DB.reg[rkey(ds,a.id)];
+      if(r){ if(r.s==="nao"&&!r.m)out.push({ds,aluno:a,semMotivo:true}); }
+      else if(ds>=cad)out.push({ds,aluno:a,semMotivo:false}); // não alerta dias anteriores ao cadastro
+    });
+  }
+  return out;
+}
+
+function calcMes(a,ym){
+  const [Y,M]=ym.split("-").map(Number);
+  const nDays=new Date(Y,M,0).getDate();
+  let previstas=0,feitas=0;const cobradas=[],perdoadas=[],semMarca=[];
+  for(let d=1;d<=nDays;d++){
+    const ds=ym+"-"+pad(d);
+    if(!isScheduled(a,ds))continue;
+    previstas++;
+    const r=DB.reg[rkey(ds,a.id)];
+    if(!r){const cad=a.cadastro||a.desde; if(ds<hojeStr()&&ds>=cad)semMarca.push(ds);continue}
+    if(r.s==="fez")feitas++;
+    else if(r.c)cobradas.push({ds,m:r.m,o:r.o});
+    else perdoadas.push({ds,m:r.m,o:r.o});
+  }
+  const extras=DB.extras.filter(e=>e.aluno===a.id&&e.data.startsWith(ym));
+  const extrasCobr=extras.filter(e=>e.cobrar).length;
+  // PREVISÃO: toda aula prevista no mês é cobrável, exceto as faltas perdoadas; + extras cobráveis.
+  // Marcar "fez" ou uma falta cobrável não muda o previsto; só a falta SEM cobrança reduz.
+  const cobraveis=Math.max(0,previstas-perdoadas.length)+extrasCobr;
+  const total=a.tipo==="mensal"?(previstas||feitas||extras.length?a.valor:0):cobraveis*a.valor;
+  return {previstas,feitas,cobradas,perdoadas,semMarca,extras,extrasCobr,cobraveis,total};
+}
+
+/* ───────────────── estado de UI ───────────────── */
+let view="dia", diaAtual=hojeStr();
+const now=new Date();
+let mesAtual=now.getFullYear()+"-"+pad(now.getMonth()+1);
+let editandoAluno=null, formHorarios=null;
+
+/* ───────────────── tabs ───────────────── */
+const tabs={dia:document.getElementById("tabDia"),mes:document.getElementById("tabMes"),fin:document.getElementById("tabFin"),alunos:document.getElementById("tabAlunos")};
+const views={dia:document.getElementById("viewDia"),mes:document.getElementById("viewMes"),fin:document.getElementById("viewFin"),alunos:document.getElementById("viewAlunos")};
+Object.keys(tabs).forEach(k=>tabs[k].addEventListener("click",()=>{view=k;render()}));
+
+/* ───────────────── render: DIA ───────────────── */
+function renderDia(){
+  const el=views.dia;el.innerHTML="";
+  const pend=pendencias();
+
+  const nav=document.createElement("div");nav.className="nav";
+  nav.innerHTML=`<button class="arrow" id="dPrev" aria-label="dia anterior">◀</button>
+    <div class="label">${labelDia(diaAtual)}${diaAtual===hojeStr()?" · hoje":""}</div>
+    <button class="arrow" id="dNext" aria-label="próximo dia">▶</button>
+    <button class="today" id="dHoje">hoje</button>
+    <input type="date" id="dPick" value="${diaAtual}">`;
+  el.appendChild(nav);
+  nav.querySelector("#dPrev").onclick=()=>{diaAtual=addDias(diaAtual,-1);render()};
+  nav.querySelector("#dNext").onclick=()=>{diaAtual=addDias(diaAtual,1);render()};
+  nav.querySelector("#dHoje").onclick=()=>{diaAtual=hojeStr();render()};
+  nav.querySelector("#dPick").onchange=e=>{if(e.target.value){diaAtual=e.target.value;render()}};
+
+  if(pend.length){
+    const bx=document.createElement("div");bx.className="alertbox";
+    const p=pend[0];
+    bx.innerHTML=`⚠️ <b>${pend.length}</b> aula${pend.length>1?"s":""} sem marcação em dias anteriores.
+      Primeira: ${p.aluno.nome} em ${labelData(p.ds)} — <a id="irPend">resolver</a>`;
+    el.appendChild(bx);
+    bx.querySelector("#irPend").onclick=()=>{diaAtual=p.ds;render()};
+  }
+
+  if(!DB.alunos.length){
+    el.insertAdjacentHTML("beforeend",`<div class="empty">Nenhum aluno cadastrado ainda. Vá na aba <b>👥 Alunos</b> pra começar.</div>`);
+    return;
+  }
+
+  const lista=scheduledFor(diaAtual);
+  if(!lista.length)
+    el.insertAdjacentHTML("beforeend",`<div class="empty">Ninguém agendado pra este dia. 🌴 (Dá pra adicionar uma aula extra ali embaixo.)</div>`);
+
+  lista.forEach(a=>{
+    const k=rkey(diaAtual,a.id), r=DB.reg[k];
+    const card=document.createElement("div");
+    card.className="card"+(r?(r.s==="fez"?" fez":" nao"):"");
+    let head=`<div class="chead"><span class="cname">${esc(a.nome)}</span>`;
+    const hDia=horaDoDia(a,diaAtual);
+    head+=hDia?`<span class="chip">${hDia}</span>`:`<span class="chip semhora">⏱ sem horário</span>`;
+    head+=`<span class="chip">${a.tipo==="mensal"?"mensal "+fmtRS(a.valor):fmtRS(a.valor)+"/aula"}</span>`;
+    if(r&&r.s==="nao")head+=`<span class="chip ${r.c?"warn":"no"}">${r.c?"💰 será cobrada":"não cobra"}</span>`;
+    head+=`</div>`;
+    let body=`<div class="cbtns">
+      <button class="bfez${r&&r.s==="fez"?" on":""}">✓ Fez</button>
+      <button class="bnao${r&&r.s==="nao"?" on":""}">✗ Não fez</button></div>`;
+    if(r&&r.s==="nao"){
+      body+=`<div class="naoblock">
+        <select class="mot"><option value="">— motivo? —</option>${MOTIVOS.map(m=>
+          `<option value="${m.k}"${r.m===m.k?" selected":""}>${m.l}</option>`).join("")}</select>
+        <button class="cobrar${r.c?" sim":""}">💰 cobrar: ${r.c?"SIM":"não"}</button>`;
+      if(r.m==="outro")body+=`<input type="text" class="obs" placeholder="qual?" value="${esc(r.o||"")}">`;
+      body+=`</div>`;
+      const _ano=diaAtual.slice(0,4), _lim=franquiaDe(a), _us=faltasGratisAno(a,_ano), _rest=_lim-_us;
+      body+=`<div class="franqline">🎁 Faltas grátis de ${_ano}: <b>${_us}</b>/${_lim} · ${_rest>0?`restam <b>${_rest}</b>`:`<span class="over">esgotada — excedente vai pra cobrança</span>`}</div>`;
+    }
+    if(r)body+=`<button class="clear">limpar marcação</button>`;
+    card.innerHTML=head+body;
+
+    card.querySelector(".bfez").onclick=()=>{
+      if(r&&r.s==="fez")delete DB.reg[k];else DB.reg[k]={s:"fez"};
+      saveDB();render();
+    };
+    card.querySelector(".bnao").onclick=()=>{
+      if(r&&r.s==="nao")delete DB.reg[k];else DB.reg[k]={s:"nao",m:"",c:false};
+      saveDB();render();
+    };
+    const mot=card.querySelector(".mot");
+    if(mot)mot.onchange=e=>{
+      const m=MOTIVOS.find(x=>x.k===e.target.value);
+      DB.reg[k].m=e.target.value;
+      let cobra=m?m.c:false;
+      // franquia anual esgotada + falta do aluno (consome franquia, normalmente grátis) → passa a cobrar
+      if(m&&m.franq&&!m.c&&faltasGratisAno(a,diaAtual.slice(0,4),k)>=franquiaDe(a))cobra=true;
+      DB.reg[k].c=cobra;
+      saveDB();render();
+    };
+    const cb=card.querySelector(".cobrar");
+    if(cb)cb.onclick=()=>{DB.reg[k].c=!DB.reg[k].c;saveDB();render()};
+    const obs=card.querySelector(".obs");
+    if(obs)obs.onchange=e=>{DB.reg[k].o=e.target.value;saveDB()};
+    const cl=card.querySelector(".clear");
+    if(cl)cl.onclick=()=>{delete DB.reg[k];saveDB();render()};
+    el.appendChild(card);
+  });
+
+  /* extras do dia */
+  el.insertAdjacentHTML("beforeend",`<div class="exhead">Aulas extras / reposições</div>`);
+  DB.extras.filter(e=>e.data===diaAtual).forEach(x=>{
+    const a=DB.alunos.find(a=>a.id===x.aluno);
+    const row=document.createElement("div");row.className="card fez";
+    row.innerHTML=`<div class="chead"><span class="cname">${a?esc(a.nome):"?"}</span>
+      <span class="chip ok">extra</span>
+      <span class="chip ${x.cobrar?"warn":""}">${x.cobrar?"💰 cobrada":"sem cobrança (reposição)"}</span>
+      <button class="xdel" aria-label="remover">🗑</button></div>`;
+    row.querySelector(".xdel").onclick=()=>{DB.extras=DB.extras.filter(e=>e.id!==x.id);saveDB();render()};
+    el.appendChild(row);
+  });
+  const ativos=DB.alunos.filter(a=>a.ativo!==false);
+  if(ativos.length){
+    const add=document.createElement("div");add.className="addextra";
+    add.innerHTML=`<select id="exAluno"><option value="">+ aula extra de…</option>${ativos.map(a=>
+        `<option value="${a.id}">${esc(a.nome)}</option>`).join("")}</select>
+      <button class="cobrar sim" id="exCobrar">💰 cobrar: SIM</button>
+      <button id="exAdd">adicionar</button>`;
+    let exCobrar=true;
+    add.querySelector("#exCobrar").onclick=e=>{exCobrar=!exCobrar;
+      e.target.className="cobrar"+(exCobrar?" sim":"");
+      e.target.textContent="💰 cobrar: "+(exCobrar?"SIM":"não")};
+    add.querySelector("#exAdd").onclick=()=>{
+      const id=add.querySelector("#exAluno").value;
+      if(!id)return;
+      DB.extras.push({id:"x"+Date.now().toString(36),data:diaAtual,aluno:id,cobrar:exCobrar});
+      saveDB();render();
+    };
+    el.appendChild(add);
+  }
+}
+
+/* ───────────────── render: MÊS ───────────────── */
+function moveMes(n){
+  let[Y,M]=mesAtual.split("-").map(Number);
+  M+=n;if(M<1){M=12;Y--}if(M>12){M=1;Y++}
+  mesAtual=Y+"-"+pad(M);render();
+}
+function renderMes(){
+  const el=views.mes;el.innerHTML="";
+  const[Y,M]=mesAtual.split("-").map(Number);
+
+  const nav=document.createElement("div");nav.className="nav";
+  nav.innerHTML=`<button class="arrow" id="mPrev" aria-label="mês anterior">◀</button>
+    <div class="label">${MESES[M-1]} de ${Y}</div>
+    <button class="arrow" id="mNext" aria-label="próximo mês">▶</button>`;
+  el.appendChild(nav);
+  nav.querySelector("#mPrev").onclick=()=>moveMes(-1);
+  nav.querySelector("#mNext").onclick=()=>moveMes(1);
+
+  const dados=DB.alunos.map(a=>({a,c:calcMes(a,mesAtual)}))
+    .filter(x=>x.c.previstas||x.c.feitas||x.c.extras.length||x.c.cobradas.length||x.c.perdoadas.length);
+  if(!dados.length){
+    el.insertAdjacentHTML("beforeend",`<div class="empty">Sem movimento neste mês.</div>`);
+    return;
+  }
+
+  let tTotal=0,tPago=0;
+  dados.forEach(({a,c})=>{tTotal+=c.total;if(DB.pag[mesAtual+"_"+a.id])tPago+=c.total});
+  el.insertAdjacentHTML("beforeend",`<div class="resumo">
+    <div class="stat"><div class="v">${fmtRS(tTotal)}</div><div class="k">previsto no mês</div></div>
+    <div class="stat ok"><div class="v">${fmtRS(tPago)}</div><div class="k">já recebido</div></div>
+    <div class="stat warn"><div class="v">${fmtRS(tTotal-tPago)}</div><div class="k">falta receber</div></div>
+  </div>`);
+
+  // painel de faltas em destaque (pra nada passar despercebido)
+  const faltasMes=[];
+  dados.forEach(({a,c})=>{
+    const fs=[...c.cobradas.map(x=>({ds:x.ds,m:x.m,k:"cobra"})),
+              ...c.perdoadas.map(x=>({ds:x.ds,m:x.m,k:"perdoa"})),
+              ...c.semMarca.map(ds=>({ds,k:"semmarca"}))].sort((p,q)=>p.ds<q.ds?-1:1);
+    if(fs.length)faltasMes.push({a,fs});
+  });
+  const totFaltas=faltasMes.reduce((n,x)=>n+x.fs.length,0);
+  if(totFaltas){
+    let ph=`<div class="faltaspanel"><div class="fphead">⚠️ Faltas e pendências do mês · ${totFaltas}</div>`;
+    faltasMes.forEach(({a,fs})=>{
+      ph+=`<div class="fprow"><span class="fpnome">${esc(a.nome)}</span> `+fs.map(f=>{
+        const cls=f.k==="cobra"?"fcobra":f.k==="semmarca"?"fsem":"fperdoa";
+        const txt=f.k==="semmarca"?labelData(f.ds)+" · sem marcação":labelData(f.ds)+" · "+motivoLabel(f.m).toLowerCase()+(f.k==="cobra"?" 💰":"");
+        return `<span class="fchip ${cls}">${txt}</span>`;
+      }).join(" ")+`</div>`;
+    });
+    ph+=`<div class="fphint">💰 entra na cobrança · <span class="fchip fsem" style="padding:0 6px">sem marcação</span> = você ainda não marcou (resolva na aba Hoje)</div></div>`;
+    el.insertAdjacentHTML("beforeend",ph);
+  }
+
+  dados.forEach(({a,c})=>{
+    const pago=!!DB.pag[mesAtual+"_"+a.id];
+    const card=document.createElement("div");card.className="mcard";
+    let det="";
+    if(c.cobradas.length)det+=`<div class="mdet"><span class="dt">💰 cobráveis:</span> ${c.cobradas.map(x=>labelData(x.ds)+" ("+motivoLabel(x.m)+(x.o?": "+esc(x.o):"")+")").join(" · ")}</div>`;
+    if(c.perdoadas.length)det+=`<div class="mdet"><span class="dtok">sem cobrança:</span> ${c.perdoadas.map(x=>labelData(x.ds)+" ("+motivoLabel(x.m)+(x.o?": "+esc(x.o):"")+")").join(" · ")}</div>`;
+    if(c.semMarca.length)det+=`<div class="mdet"><span class="dt">⚠️ sem marcação:</span> ${c.semMarca.map(labelData).join(" · ")}</div>`;
+    const _ano=mesAtual.slice(0,4), _lim=franquiaDe(a), _us=faltasGratisAno(a,_ano);
+    det+=`<div class="mdet">🎁 <b>faltas grátis de ${_ano}:</b> ${_us}/${_lim} usadas${_us>=_lim?` · <span style="color:var(--warn)">esgotada, cobrando o excedente</span>`:` · restam ${_lim-_us}`}</div>`;
+    card.innerHTML=`<div class="mtop">
+        <span class="mname">${esc(a.nome)}</span>
+        <span class="mtotal">${fmtRS(c.total)}</span>
+        <button class="pago${pago?" sim":""}">${pago?"✓ PAGO":"marcar pago"}</button>
+      </div>
+      <div class="mrow">feitas <b>${c.feitas}</b> de ${c.previstas} previstas
+        ${c.extras.length?` · extras <b>${c.extras.length}</b> (${c.extrasCobr} cobrável${c.extrasCobr!==1?"eis":""})`:""}
+        ${a.tipo==="mensal"?` · <span class="chip">mensalidade fixa</span>`:` · previsto <b>${c.cobraveis}</b> aula${c.cobraveis!==1?"s":""} × ${fmtRS(a.valor)}`}
+        ${c.perdoadas.length&&a.tipo!=="mensal"?` · <span style="color:var(--no)">−${c.perdoadas.length} sem cobrança</span>`:""}</div>
+      ${det}
+      <div class="mactions"><button class="aviso">📋 copiar aviso p/ aluno</button></div>`;
+    card.querySelector(".pago").onclick=()=>{
+      const k=mesAtual+"_"+a.id;
+      if(DB.pag[k])delete DB.pag[k];else DB.pag[k]=true;
+      saveDB();render();
+    };
+    card.querySelector(".aviso").onclick=e=>copiar(avisoAluno(a,c),e.currentTarget);
+    el.appendChild(card);
+  });
+
+  el.insertAdjacentHTML("beforeend",`<button id="btFaltas" class="bigbtn">🚩 Ver todas as faltas do mês</button>`);
+  el.querySelector("#btFaltas").onclick=()=>abrirRelatorioFaltas(dados);
+
+  el.insertAdjacentHTML("beforeend",`<div class="mtools">
+    <button id="btExport">📋 exportar fechamento</button>
+    <button id="btBackup">💾 backup (baixar)</button>
+    <button id="btRestore">↩️ restaurar backup</button>
+    <input type="file" id="fileRestore" style="display:none">
+  </div><textarea id="exportBox" readonly></textarea>`);
+
+  el.querySelector("#btExport").onclick=()=>{
+    const box=el.querySelector("#exportBox");
+    box.value=gerarExport(dados,tTotal,tPago);
+    box.style.display="block";box.select();
+    try{document.execCommand("copy")}catch(e){}
+  };
+  el.querySelector("#btBackup").onclick=baixarBackup;
+  el.querySelector("#btRestore").onclick=()=>el.querySelector("#fileRestore").click();
+  el.querySelector("#fileRestore").onchange=restoreFrom;
+}
+
+/* ── relatório de faltas do mês ── */
+function faltasDoMes(dados){
+  const out=[];
+  dados.forEach(({a,c})=>{
+    const fs=[...c.cobradas.map(x=>({ds:x.ds,m:x.m,o:x.o,cobra:true})),
+              ...c.perdoadas.map(x=>({ds:x.ds,m:x.m,o:x.o,cobra:false}))].sort((p,q)=>p.ds<q.ds?-1:1);
+    out.push({a,c,fs,semMarca:c.semMarca});
+  });
+  return out;
+}
+function textoRelatorioFaltas(dados){
+  const[Y,M]=mesAtual.split("-").map(Number);
+  const linhas=faltasDoMes(dados);
+  const comFalta=linhas.filter(x=>x.fs.length), semFalta=linhas.filter(x=>!x.fs.length);
+  const tot=comFalta.reduce((n,x)=>n+x.fs.length,0);
+  const totCobr=comFalta.reduce((n,x)=>n+x.fs.filter(f=>f.cobra).length,0);
+  let s=`FALTAS — ${MESES[M-1]}/${Y}\n${tot} falta(s) · ${totCobr} cobrável(is)\n`;
+  comFalta.forEach(({a,fs})=>{
+    const nc=fs.filter(f=>f.cobra).length;
+    s+=`\n${a.nome} — ${fs.length} falta(s)${nc?` · ${nc} na cobrança`:""}\n`;
+    fs.forEach(f=>{s+=`   ${labelData(f.ds)} — ${motivoLabel(f.m).toLowerCase()}${f.o?" ("+f.o+")":""}${f.cobra?" 💰":""}\n`;});
+    const fg=faltasGratisAno(a,mesAtual.slice(0,4)),fl=franquiaDe(a);
+    s+=`   🎁 faltas grátis do ano: ${fg}/${fl}${fg>=fl?" (esgotada)":""}\n`;
+  });
+  const pend=linhas.filter(x=>x.semMarca.length);
+  if(pend.length){s+=`\n⚠️ SEM MARCAÇÃO (resolver na aba Hoje):\n`;
+    pend.forEach(({a,semMarca})=>{s+=`   ${a.nome}: ${semMarca.map(labelData).join(", ")}\n`;});}
+  if(semFalta.length)s+=`\nSem faltas: ${semFalta.map(x=>x.a.nome).join(", ")}\n`;
+  return s;
+}
+function abrirRelatorioFaltas(dados){
+  const old=document.getElementById("relModal");if(old)old.remove();
+  const[Y,M]=mesAtual.split("-").map(Number);
+  const linhas=faltasDoMes(dados);
+  const comFalta=linhas.filter(x=>x.fs.length), semFalta=linhas.filter(x=>!x.fs.length);
+  const tot=comFalta.reduce((n,x)=>n+x.fs.length,0);
+  const totCobr=comFalta.reduce((n,x)=>n+x.fs.filter(f=>f.cobra).length,0);
+  let corpo="";
+  if(!tot){corpo=`<div class="empty" style="padding:14px 2px">Nenhuma falta registrada em ${MESES[M-1]}. 🎉</div>`;}
+  comFalta.forEach(({a,fs})=>{
+    const nc=fs.filter(f=>f.cobra).length, fg=faltasGratisAno(a,mesAtual.slice(0,4)), fl=franquiaDe(a);
+    corpo+=`<div class="relblk"><div class="relnome">${esc(a.nome)}
+      <span class="relcount">${fs.length} falta${fs.length>1?"s":""}</span>
+      ${nc?`<span class="fchip fcobra">${nc} na cobrança 💰</span>`:""}</div>`;
+    fs.forEach(f=>{
+      corpo+=`<div class="relitem ${f.cobra?"cob":""}"><span class="reldt">${labelData(f.ds)}</span>
+        <span class="relmot">${motivoLabel(f.m).toLowerCase()}${f.o?" · "+esc(f.o):""}</span>
+        ${f.cobra?'<span class="relbadge">💰 cobra</span>':'<span class="relbadge free">grátis</span>'}</div>`;
+    });
+    corpo+=`<div class="relfranq">🎁 faltas grátis do ano: <b>${fg}/${fl}</b>${fg>=fl?' · <span style="color:var(--warn)">esgotada</span>':` · restam ${fl-fg}`}</div></div>`;
+  });
+  const pend=linhas.filter(x=>x.semMarca.length);
+  if(pend.length){
+    corpo+=`<div class="relblk"><div class="relnome" style="color:var(--no)">⚠️ Sem marcação</div>`;
+    pend.forEach(({a,semMarca})=>{corpo+=`<div class="relitem"><span class="relmot">${esc(a.nome)}: ${semMarca.map(labelData).join(" · ")}</span></div>`;});
+    corpo+=`<div class="relfranq">Resolva na aba <b>Hoje</b> pra não ficar buraco no fechamento.</div></div>`;
+  }
+  if(semFalta.length)corpo+=`<div class="relsem">✅ Sem faltas: ${semFalta.map(x=>esc(x.a.nome)).join(" · ")}</div>`;
+  const ov=document.createElement("div");ov.id="relModal";ov.className="modal";
+  ov.innerHTML=`<div class="modalbox">
+    <h3>🚩 Faltas de ${MESES[M-1]} de ${Y}</h3>
+    <div class="modalsub"><b>${tot}</b> falta(s) no mês · <b>${totCobr}</b> entra(m) na cobrança</div>
+    <div class="implist" style="padding:2px 0">${corpo}</div>
+    <div class="modalfoot"><span></span><span class="modalbtns">
+      <button id="relCopy">📋 copiar</button><button id="relClose">fechar</button></span></div>
+  </div>`;
+  document.body.appendChild(ov);
+  ov.querySelector("#relClose").onclick=()=>ov.remove();
+  ov.onclick=e=>{if(e.target===ov)ov.remove()};
+  ov.querySelector("#relCopy").onclick=e=>copiar(textoRelatorioFaltas(dados),e.currentTarget);
+}
+
+function gerarExport(dados,tTotal,tPago){
+  const[Y,M]=mesAtual.split("-").map(Number);
+  let s=`[PERSONAL-FECHAMENTO ${mesAtual}] — ${MESES[M-1]}/${Y}\n`;
+  dados.forEach(({a,c})=>{
+    const pago=!!DB.pag[mesAtual+"_"+a.id];
+    s+=`\n${a.nome} — ${a.tipo==="mensal"?"mensalidade "+fmtRS(a.valor):fmtRS(a.valor)+"/aula"}\n`;
+    s+=`  feitas ${c.feitas}/${c.previstas} previstas${a.tipo==="mensal"?"":" · previsto "+c.cobraveis+" aulas"} · extras ${c.extras.length} (${c.extrasCobr} cobráveis)\n`;
+    if(c.cobradas.length)s+=`  desmarcadas COBRÁVEIS: ${c.cobradas.map(x=>labelData(x.ds)+" ("+motivoLabel(x.m)+")").join(", ")}\n`;
+    if(c.perdoadas.length)s+=`  faltas SEM cobrança: ${c.perdoadas.map(x=>labelData(x.ds)+" ("+motivoLabel(x.m)+")").join(", ")}\n`;
+    if(c.semMarca.length)s+=`  ⚠️ SEM MARCAÇÃO: ${c.semMarca.map(labelData).join(", ")}\n`;
+    const _fg=faltasGratisAno(a,mesAtual.slice(0,4)),_fl=franquiaDe(a);
+    s+=`  faltas grátis ${mesAtual.slice(0,4)}: ${_fg}/${_fl}${_fg>=_fl?" (esgotada)":""}\n`;
+    s+=`  PREVISTO: ${fmtRS(c.total)} — ${pago?"PAGO ✓":"PENDENTE"}\n`;
+  });
+  s+=`\nTOTAL PREVISTO: ${fmtRS(tTotal)} · recebido ${fmtRS(tPago)} · falta receber ${fmtRS(tTotal-tPago)}\n`;
+  return s;
+}
+
+/* ───────────────── FINANCEIRO ───────────────── */
+function addMesYm(ym,n){let[Y,M]=ym.split("-").map(Number);M+=n;while(M<1){M+=12;Y--}while(M>12){M-=12;Y++}return Y+"-"+pad(M)}
+function receitaMes(ym){return DB.alunos.reduce((s,a)=>s+calcMes(a,ym).total,0)}
+function recebidoMes(ym){return DB.alunos.reduce((s,a)=>s+(DB.pag[ym+"_"+a.id]?calcMes(a,ym).total:0),0)}
+function custosMesCalc(ym){
+  const fixos=(DB.custosFixos||[]).filter(c=>ym>=(c.desde||"0000-00"));
+  const avulsos=(DB.custosMes&&DB.custosMes[ym])||[];
+  const tf=fixos.reduce((s,c)=>s+(+c.valor||0),0);
+  const ta=avulsos.reduce((s,c)=>s+(+c.valor||0),0);
+  return {fixos,avulsos,tf,ta,total:tf+ta};
+}
+function primeiroMesFin(){
+  let cands=[];
+  DB.alunos.forEach(a=>{if(a.desde)cands.push(a.desde.slice(0,7))});
+  (DB.custosFixos||[]).forEach(c=>{if(c.desde)cands.push(c.desde)});
+  Object.keys(DB.custosMes||{}).forEach(k=>cands.push(k));
+  Object.keys(DB.reg||{}).forEach(k=>cands.push(k.slice(0,7)));
+  cands=cands.filter(Boolean).sort();
+  return cands.length?cands[0]:mesAtual;
+}
+function mesesComparar(){
+  const first=primeiroMesFin();
+  let start=addMesYm(mesAtual,-5); if(start<first)start=first; if(start>mesAtual)start=mesAtual;
+  const out=[]; for(let ym=start;ym<=mesAtual&&out.length<12;ym=addMesYm(ym,1))out.push(ym);
+  return out.length?out:[mesAtual];
+}
+function fmtK(v){const neg=v<0,a=Math.abs(v);const s=a>=1000?(a/1000).toFixed(1).replace(/\.0$/,"").replace(".",",")+"k":String(Math.round(a));return (neg?"-":"")+"R$"+s}
+function copiar(txt,btn){
+  const done=()=>{if(btn){if(!btn.dataset.lbl)btn.dataset.lbl=btn.textContent;btn.textContent="copiado ✓";setTimeout(()=>{try{btn.textContent=btn.dataset.lbl}catch(e){}},1600);}};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,fallback);else fallback();
+  function fallback(){const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy")}catch(e){}ta.remove();done();}
+}
+function niceCeil(v){if(v<=0)return 1;const mag=Math.pow(10,Math.floor(Math.log10(v))),n=v/mag,step=n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10;return step*mag;}
+function gaugeMargem(pct){
+  const p=Math.max(0,Math.min(100,pct)),cx=72,cy=72,R=54;
+  const pt=t=>{const a=Math.PI-t*Math.PI;return[(cx+R*Math.cos(a)).toFixed(1),(cy-R*Math.sin(a)).toFixed(1)];};
+  const arc=(t0,t1,col,w)=>{const[x0,y0]=pt(t0),[x1,y1]=pt(t1);return`<path d="M${x0} ${y0} A${R} ${R} 0 0 1 ${x1} ${y1}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`;};
+  const col=pct<0?"#ff8080":pct<30?"#f5b84f":"#3ecf8e", gm=pt(0.30);
+  let s=`<svg viewBox="0 0 144 92" width="128" role="img" aria-label="Margem ${Math.round(pct)} por cento">`;
+  s+=arc(0,1,"#2a2f3a",12);
+  if(p>0)s+=arc(0,p/100,col,12);
+  s+=`<circle cx="${gm[0]}" cy="${gm[1]}" r="3.5" fill="#e8eaed"/>`;
+  s+=`<text x="72" y="60" text-anchor="middle" font-size="27" font-weight="700" fill="${col}">${Math.round(pct)}%</text>`;
+  s+=`<text x="72" y="82" text-anchor="middle" font-size="11" fill="#9aa0aa">margem · meta 30%</text></svg>`;
+  return s;
+}
+// gráfico interativo: receita × custos por mês, com grade, animação e tooltip
+function renderCaixaChart(el){
+  const data=mesesComparar().map(ym=>{const r=receitaMes(ym),c=custosMesCalc(ym).total;return{ym,r,c,s:r-c};});
+  const n=data.length, W=Math.max(300,n*82), H=210, padL=36,padR=10,padT=14,padB=26;
+  const plotH=H-padT-padB, plotW=W-padL-padR, slot=plotW/n, bw=Math.min(22,slot*0.3);
+  const nm=niceCeil(Math.max(1,...data.map(d=>Math.max(d.r,d.c))));
+  let grid="";const steps=4;
+  for(let i=0;i<=steps;i++){const gy=padT+plotH*(i/steps),val=nm*(1-i/steps);
+    grid+=`<line x1="${padL}" y1="${gy.toFixed(1)}" x2="${W-padR}" y2="${gy.toFixed(1)}" stroke="#2a2f3a" stroke-width="1" ${i===steps?"":'stroke-dasharray="2 4"'}/>`;
+    grid+=`<text x="${padL-5}" y="${(gy+3).toFixed(1)}" text-anchor="end" font-size="9" fill="#6a7280">${fmtK(val)}</text>`;}
+  let bars="";
+  data.forEach((d,i)=>{
+    const cx=padL+slot*i+slot/2, atual=d.ym===mesAtual, hR=plotH*(d.r/nm), hC=plotH*(d.c/nm);
+    const lbl=MESES[Number(d.ym.split("-")[1])-1].slice(0,3);
+    bars+=`<g class="gbargroup" data-lbl="${lbl}" data-r="${d.r}" data-c="${d.c}" data-s="${d.s}">`;
+    bars+=`<rect class="gbarhit" x="${(cx-slot/2).toFixed(1)}" y="${padT}" width="${slot.toFixed(1)}" height="${plotH}" fill="transparent"/>`;
+    bars+=`<rect class="gbar" x="${(cx-bw-2).toFixed(1)}" y="${(padT+plotH-hR).toFixed(1)}" width="${bw}" height="${Math.max(.5,hR).toFixed(1)}" rx="3" fill="#3ecf8e" opacity="${atual?1:.7}"/>`;
+    bars+=`<rect class="gbar" x="${(cx+2).toFixed(1)}" y="${(padT+plotH-hC).toFixed(1)}" width="${bw}" height="${Math.max(.5,hC).toFixed(1)}" rx="3" fill="#ff8080" opacity="${atual?1:.7}"/>`;
+    bars+=`<text x="${cx.toFixed(1)}" y="${(H-9).toFixed(1)}" text-anchor="middle" font-size="10" fill="${atual?'#e8eaed':'#9aa0aa'}" font-weight="${atual?700:400}">${lbl}</text></g>`;
+  });
+  const svg=`<svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMidYMid meet" class="caixachart" role="img" aria-label="Receita e custos por mês">${grid}${bars}</svg>`;
+  const wrap=document.createElement("div");wrap.className="chartcard";
+  wrap.innerHTML=`<div class="chartlegrow"><span class="cleg"><i style="background:#3ecf8e"></i>receita</span><span class="cleg"><i style="background:#ff8080"></i>custos</span></div>
+    <div class="chartwrap">${svg}</div><div class="charttip"></div>`;
+  el.appendChild(wrap);
+  const tip=wrap.querySelector(".charttip");
+  const setTip=d=>{const r=+d.r,c=+d.c,s=+d.s,pct=r>0?Math.round(s/r*100):0;
+    tip.innerHTML=`<b>${d.lbl}</b> · receita ${fmtRS(r)} · custos ${fmtRS(c)} · <b style="color:${s>=0?'var(--accent)':'var(--no)'}">sobra ${fmtRS(s)} (${pct}%)</b>`;};
+  const cur=data.find(d=>d.ym===mesAtual)||data[data.length-1];
+  if(cur)setTip({lbl:MESES[Number(cur.ym.split("-")[1])-1].slice(0,3),r:cur.r,c:cur.c,s:cur.s});
+  wrap.querySelectorAll(".gbargroup").forEach(g=>{const show=()=>setTip(g.dataset);g.addEventListener("pointerenter",show);g.addEventListener("pointerdown",show);});
+}
+function avisoAluno(a,c){
+  const nome=String(a.nome).trim().split(/\s+/)[0];
+  const mesLbl=MESES[Number(mesAtual.split("-")[1])-1]+"/"+mesAtual.split("-")[0];
+  const faltas=[...c.cobradas.map(x=>({ds:x.ds,m:x.m,cobra:true})),...c.perdoadas.map(x=>({ds:x.ds,m:x.m,cobra:false}))].sort((p,q)=>p.ds<q.ds?-1:1);
+  let s=`Oi, ${nome}! 📋 Resumo das suas aulas em ${mesLbl}:\n\n✅ Feitas: ${c.feitas}`;
+  if(!faltas.length){s+=`\n\nSem faltas no mês. 💪`;return s;}
+  s+=`\n❌ Faltas: ${faltas.length}`;
+  faltas.forEach(f=>{s+=`\n   • ${labelData(f.ds)} — ${motivoLabel(f.m).toLowerCase()}${f.cobra?" (entra na cobrança)":""}`;});
+  const nCobra=faltas.filter(f=>f.cobra).length;
+  if(nCobra)s+=`\n\nComo combinamos, ${nCobra===1?"essa falta conta":"essas "+nCobra+" faltas contam"} na cobrança do mês.`;
+  return s+`\n\nQualquer coisa, me chama! 💪`;
+}
+/* ── importar fatura (CSV / OFX) — lê 100% local, nada é enviado ── */
+function parseNumBR(s){
+  s=String(s).replace(/[R$\s]/g,"").trim();
+  if(!s)return NaN;
+  if(s.indexOf(",")>-1&&s.indexOf(".")>-1){
+    if(s.lastIndexOf(",")>s.lastIndexOf("."))s=s.replace(/\./g,"").replace(",",".");
+    else s=s.replace(/,/g,"");
+  }else if(s.indexOf(",")>-1){s=s.replace(",",".");}
+  return parseFloat(s);
+}
+function parseDataBR(s){
+  s=String(s).trim();
+  let m=s.match(/(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})/);
+  if(m)return m[1]+"-"+String(m[2]).padStart(2,"0")+"-"+String(m[3]).padStart(2,"0");
+  m=s.match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
+  if(m){let y=m[3];if(y.length===2)y="20"+y;return y+"-"+String(m[2]).padStart(2,"0")+"-"+String(m[1]).padStart(2,"0");}
+  return null;
+}
+function mkItem(data,desc,amt){
+  const ignore=/pagamento|pgto|estorno|cr[eé]dito recebido|saldo|fatura anterior|juros|anuidade parcelad/i.test(desc);
+  return {data,desc:String(desc).replace(/\s+/g," ").trim().slice(0,80)||"lançamento",valor:Math.abs(amt),raw:amt,on:!ignore};
+}
+function parseOFX(text){
+  const out=[];
+  const blocks=text.match(/<STMTTRN>[\s\S]*?<\/STMTTRN>/gi)||[];
+  const tag=(b,t)=>{const m=b.match(new RegExp("<"+t+">\\s*([^<\\r\\n]*)","i"));return m?m[1].trim():""};
+  blocks.forEach(b=>{
+    const amt=parseFloat((tag(b,"TRNAMT")||"").replace(",","."))||0;
+    const dt=tag(b,"DTPOSTED").slice(0,8);
+    const data=/^\d{8}$/.test(dt)?dt.slice(0,4)+"-"+dt.slice(4,6)+"-"+dt.slice(6,8):null;
+    out.push(mkItem(data,tag(b,"MEMO")||tag(b,"NAME")||"lançamento",amt));
+  });
+  return out;
+}
+function parseCSVLine(line,delim){
+  const out=[];let cur="",q=false;
+  for(let i=0;i<line.length;i++){const c=line[i];
+    if(q){if(c==='"'){if(line[i+1]==='"'){cur+='"';i++}else q=false}else cur+=c;}
+    else{if(c==='"')q=true;else if(c===delim){out.push(cur);cur=""}else cur+=c;}
+  }
+  out.push(cur);return out;
+}
+function parseCSV(text){
+  const lines=text.split(/\r?\n/).filter(l=>l.trim());
+  if(!lines.length)return [];
+  const delim=(lines[0].split(";").length>=lines[0].split(",").length)?";":",";
+  let hIdx=-1,cData=-1,cDesc=-1,cVal=-1;
+  for(let i=0;i<Math.min(6,lines.length);i++){
+    const cells=parseCSVLine(lines[i],delim).map(c=>c.toLowerCase());
+    const di=cells.findIndex(c=>/data|date|lançament|lancament/.test(c));
+    const vi=cells.findIndex(c=>/valor|value|amount|montante|quantia|d[ée]bito/.test(c));
+    const ci=cells.findIndex(c=>/descri|hist[oó]ri|estabelec|memo|t[ií]tulo|title|lançament/.test(c));
+    if(di>-1&&vi>-1){hIdx=i;cData=di;cVal=vi;cDesc=ci>-1?ci:cells.findIndex((c,idx)=>idx!==di&&idx!==vi);break;}
+  }
+  const out=[];
+  for(let i=(hIdx>-1?hIdx+1:0);i<lines.length;i++){
+    const cells=parseCSVLine(lines[i],delim);
+    let data,desc,valor;
+    if(hIdx>-1){data=parseDataBR(cells[cData]||"");desc=cells[cDesc]||"lançamento";valor=parseNumBR(cells[cVal]||"");}
+    else{data=null;valor=NaN;const dp=[];
+      cells.forEach(c=>{const d=parseDataBR(c);
+        if(d&&!data){data=d;return}
+        if(/[.,]\d{2}\s*$/.test(c.trim())||/^-?\d+[.,]\d{2}$/.test(c.trim())){const n=parseNumBR(c);if(!isNaN(n)){valor=n;return}}
+        dp.push(c);});
+      desc=dp.join(" ");}
+    if(isNaN(valor)||!isFinite(valor)||valor===0)continue;
+    out.push(mkItem(data,desc,valor));
+  }
+  return out;
+}
+function parseFatura(text,name){
+  const isOFX=/\.ofx$/i.test(name||"")||/<STMTTRN>|<OFX>/i.test(text);
+  return (isOFX?parseOFX(text):parseCSV(text)).filter(it=>it.valor>0);
+}
+function lerFaturaFile(e){
+  const f=e.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{try{abrirImportModal(parseFatura(rd.result,f.name));}
+    catch(err){alert("Não consegui ler esse arquivo. Confirme que é a fatura em CSV ou OFX — se persistir, me diga o banco que eu ajusto o formato.");}};
+  rd.readAsText(f,"utf-8");
+  e.target.value="";
+}
+function abrirImportModal(items){
+  if(!items.length){alert("Não achei lançamentos nesse arquivo. É um CSV ou OFX de fatura? Me diga o banco que eu ajusto.");return}
+  const old=document.getElementById("impModal");if(old)old.remove();
+  const ov=document.createElement("div");ov.id="impModal";ov.className="modal";
+  const rows=items.map((it,i)=>`<label class="improw">
+      <input type="checkbox" data-i="${i}" ${it.on?"checked":""}>
+      <span class="impdt">${it.data?labelData(it.data):"—"}</span>
+      <span class="impdesc">${esc(it.desc)}</span>
+      <span class="impval">${fmtRS(it.valor)}</span></label>`).join("");
+  ov.innerHTML=`<div class="modalbox">
+    <h3>Fatura — ${items.length} lançamentos</h3>
+    <div class="modalsub">Marque só os que são <b>custos de trabalho</b>. Entram como custo avulso no mês da compra. O arquivo fica só no seu navegador.</div>
+    <div class="imptools"><button id="impAll">marcar todos</button><button id="impNone">desmarcar todos</button></div>
+    <div class="implist">${rows}</div>
+    <div class="modalfoot"><span id="impResumo"></span>
+      <span class="modalbtns"><button id="impCancel">cancelar</button><button id="impOk">adicionar</button></span></div>
+  </div>`;
+  document.body.appendChild(ov);
+  const chks=()=>[...ov.querySelectorAll(".implist input")];
+  function upd(){let n=0,t=0;chks().forEach(c=>{if(c.checked){n++;t+=items[+c.dataset.i].valor}});
+    ov.querySelector("#impResumo").textContent=n+" selecionados · "+fmtRS(t);
+    ov.querySelector("#impOk").textContent="adicionar "+n+" custo"+(n!==1?"s":"");}
+  chks().forEach(c=>c.onchange=upd);upd();
+  ov.querySelector("#impAll").onclick=()=>{chks().forEach(c=>c.checked=true);upd()};
+  ov.querySelector("#impNone").onclick=()=>{chks().forEach(c=>c.checked=false);upd()};
+  ov.querySelector("#impCancel").onclick=()=>ov.remove();
+  ov.onclick=e=>{if(e.target===ov)ov.remove()};
+  ov.querySelector("#impOk").onclick=()=>{
+    const sel=chks().filter(c=>c.checked).map(c=>items[+c.dataset.i]);
+    if(!sel.length){ov.remove();return}
+    let add=0,dup=0;
+    sel.forEach(it=>{
+      const ym=it.data?it.data.slice(0,7):mesAtual;
+      if(!DB.custosMes[ym])DB.custosMes[ym]=[];
+      const sig="f:"+(it.data||"")+"|"+it.valor.toFixed(2)+"|"+it.desc.toLowerCase();
+      if(DB.custosMes[ym].some(x=>x.src===sig)){dup++;return}
+      DB.custosMes[ym].push({id:"ca"+Date.now().toString(36)+(add++),nome:it.desc,valor:it.valor,src:sig});
+    });
+    ov.remove();saveDB();render();
+    alert(add+" custo(s) adicionado(s)"+(dup?" · "+dup+" já existiam e foram ignorados":"")+".");
+  };
+}
+function renderFinanceiro(){
+  const el=views.fin; el.innerHTML="";
+  const[Y,M]=mesAtual.split("-").map(Number);
+  const nav=document.createElement("div");nav.className="nav";
+  nav.innerHTML=`<button class="arrow" id="fPrevM" aria-label="mês anterior">◀</button>
+    <div class="label">${MESES[M-1]} de ${Y}</div>
+    <button class="arrow" id="fNextM" aria-label="próximo mês">▶</button>`;
+  el.appendChild(nav);
+  nav.querySelector("#fPrevM").onclick=()=>moveMes(-1);
+  nav.querySelector("#fNextM").onclick=()=>moveMes(1);
+
+  const receita=receitaMes(mesAtual), recebido=recebidoMes(mesAtual), cst=custosMesCalc(mesAtual), sobra=receita-cst.total;
+  const pC=receita>0?Math.round(cst.total/receita*100):0, pS=receita>0?Math.round(sobra/receita*100):(sobra<0?-100:0);
+  el.insertAdjacentHTML("beforeend",`<div class="resumo">
+    <div class="stat ok"><div class="v">${fmtRS(receita)}</div><div class="k">receita prevista</div></div>
+    <div class="stat"><div class="v" style="color:var(--no)">${fmtRS(cst.total)}</div><div class="k">custos · ${pC}% da receita</div></div>
+    <div class="stat"><div class="v" style="color:${sobra>=0?'var(--accent)':'var(--no)'}">${fmtRS(sobra)}</div><div class="k">sobra · ${pS}% da receita</div></div>
+  </div>`);
+  el.insertAdjacentHTML("beforeend",`<div class="finhint">A receita prevista já desconta as faltas sem cobrança. Recebido até agora: <b>${fmtRS(recebido)}</b>.</div>`);
+
+  // ── medidor de margem (sobra % vs meta 30%) ──
+  const metaMsg = receita<=0 ? "Sem receita lançada ainda neste mês."
+    : sobra<0 ? "No vermelho este mês — os custos passaram da receita."
+    : pS>=30 ? `Você está guardando <b>${pS}%</b> — acima da meta de 30%. 🎉`
+    : `Você está guardando <b>${pS}%</b> — a meta comum é 30%. Faltam <b>${fmtRS(receita*0.30-sobra)}</b> pra chegar lá.`;
+  const gwrap=document.createElement("div");gwrap.className="gaugerow";
+  gwrap.innerHTML=`<div class="gaugebox">${gaugeMargem(pS)}</div><div class="gaugemsg">${metaMsg}</div>`;
+  el.appendChild(gwrap);
+
+  // ── custos fixos ──
+  el.insertAdjacentHTML("beforeend",`<div class="exhead">Custos fixos (repetem todo mês)</div>`);
+  const wF=document.createElement("div");
+  cst.fixos.forEach(c=>{
+    const row=document.createElement("div");row.className="costrow";
+    row.innerHTML=`<span class="cnome">${esc(c.nome)}</span><span class="cval">${fmtRS(+c.valor||0)}</span><button class="cdel" aria-label="remover">🗑</button>`;
+    row.querySelector(".cdel").onclick=()=>{
+      if(!confirm('Remover o custo fixo "'+c.nome+'"? Ele sai de todos os meses.'))return;
+      DB.custosFixos=DB.custosFixos.filter(x=>x.id!==c.id);saveDB();render();
+    };
+    wF.appendChild(row);
+  });
+  if(!cst.fixos.length)wF.insertAdjacentHTML("beforeend",`<div class="empty" style="padding:8px 2px">Nenhum custo fixo ainda. Ex.: aluguel do espaço, transporte, plano do celular.</div>`);
+  el.appendChild(wF);
+  const aF=document.createElement("div");aF.className="addcost";
+  aF.innerHTML=`<input class="cin-nome" placeholder="custo fixo (ex.: aluguel)"><input class="cin-val" type="number" min="0" step="10" placeholder="R$"><button class="cadd">+ adicionar</button>`;
+  aF.querySelector(".cadd").onclick=()=>{
+    const nome=aF.querySelector(".cin-nome").value.trim(), valor=Number(aF.querySelector(".cin-val").value);
+    if(!nome||!valor){alert("Preencha o nome e o valor do custo.");return}
+    DB.custosFixos.push({id:"cf"+Date.now().toString(36),nome,valor,desde:mesAtual});saveDB();render();
+  };
+  el.appendChild(aF);
+
+  // ── custos avulsos do mês ──
+  el.insertAdjacentHTML("beforeend",`<div class="exhead">Custos avulsos de ${MESES[M-1]}</div>`);
+  const wA=document.createElement("div");
+  cst.avulsos.forEach(c=>{
+    const row=document.createElement("div");row.className="costrow";
+    row.innerHTML=`<span class="cnome">${esc(c.nome)}</span><span class="cval">${fmtRS(+c.valor||0)}</span><button class="cdel" aria-label="remover">🗑</button>`;
+    row.querySelector(".cdel").onclick=()=>{
+      DB.custosMes[mesAtual]=(DB.custosMes[mesAtual]||[]).filter(x=>x.id!==c.id);saveDB();render();
+    };
+    wA.appendChild(row);
+  });
+  if(!cst.avulsos.length)wA.insertAdjacentHTML("beforeend",`<div class="empty" style="padding:8px 2px">Nada avulso neste mês. Ex.: material, equipamento, um curso.</div>`);
+  el.appendChild(wA);
+  const aA=document.createElement("div");aA.className="addcost";
+  aA.innerHTML=`<input class="cin-nome" placeholder="custo do mês (ex.: material)"><input class="cin-val" type="number" min="0" step="10" placeholder="R$"><button class="cadd">+ adicionar</button>`;
+  aA.querySelector(".cadd").onclick=()=>{
+    const nome=aA.querySelector(".cin-nome").value.trim(), valor=Number(aA.querySelector(".cin-val").value);
+    if(!nome||!valor){alert("Preencha o nome e o valor do custo.");return}
+    if(!DB.custosMes[mesAtual])DB.custosMes[mesAtual]=[];
+    DB.custosMes[mesAtual].push({id:"ca"+Date.now().toString(36),nome,valor});saveDB();render();
+  };
+  el.appendChild(aA);
+
+  // ── importar fatura ──
+  const imp=document.createElement("button");imp.className="importbtn";
+  imp.textContent="📄 Importar fatura do cartão (CSV / OFX)";
+  imp.onclick=()=>el.querySelector("#impFile").click();
+  el.appendChild(imp);
+  el.insertAdjacentHTML("beforeend",`<input type="file" id="impFile" style="display:none"><div class="finhint" style="margin-top:0">Baixe a fatura do app do banco (CSV ou OFX) e solte aqui. É lido só no seu navegador — nada é enviado.</div>`);
+  el.querySelector("#impFile").onchange=lerFaturaFile;
+
+  // ── comparação mês a mês (interativo) ──
+  el.insertAdjacentHTML("beforeend",`<div class="exhead">Receita × custos mês a mês</div>`);
+  renderCaixaChart(el);
+}
+
+/* ───────────────── render: ALUNOS ───────────────── */
+function renderAlunos(){
+  const el=views.alunos;el.innerHTML="";
+  const ed=editandoAluno?DB.alunos.find(a=>a.id===editandoAluno):null;
+  if(formHorarios===null){
+    formHorarios = ed ? Object.keys(ed.horarios||{}).map(Number).sort((x,y)=>x-y).map(d=>({dia:d,hora:ed.horarios[d]||""}))
+                      : [{dia:null,hora:""}];
+    if(!formHorarios.length)formHorarios=[{dia:null,hora:""}];
+  }
+
+  const f=document.createElement("div");f.className="aform";
+  f.innerHTML=`<h3>${ed?"Editar aluno":"Novo aluno"}</h3>
+    <div class="frow"><input id="fNome" class="grow" placeholder="Nome do aluno" value="${ed?esc(ed.nome):""}"></div>
+    <div class="frow">
+      <select id="fTipo">
+        <option value="aula"${ed&&ed.tipo==="aula"?" selected":""}>R$ por aula</option>
+        <option value="mensal"${ed&&ed.tipo==="mensal"?" selected":""}>mensalidade fixa</option>
+      </select>
+      <input id="fValor" type="number" min="0" step="10" placeholder="valor (R$)" value="${ed?ed.valor:""}" style="width:120px">
+    </div>
+    <div class="frow" style="align-items:center">
+      <label class="flabel" style="margin:0">Conta a partir de</label>
+      <input id="fDesde" type="date" value="${ed?ed.desde:primeiroDoMes()}" style="color-scheme:dark">
+    </div>
+    <div class="frow" style="align-items:center">
+      <label class="flabel" style="margin:0">🎁 Faltas grátis por ano</label>
+      <input id="fFranquia" type="number" min="0" step="1" value="${ed?franquiaDe(ed):FRANQUIA_PADRAO}" style="width:80px">
+      <span class="flabel" style="margin:0">acima disso, começa a cobrar</span>
+    </div>
+    <label class="flabel">Dias e horários da semana</label>
+    <div id="fHorarios"></div>
+    <button type="button" class="addhora" id="fAddHora">+ adicionar dia/horário</button>
+    <div class="hint">Aluno que treina esporádico, sem dia fixo? Deixe <b>sem dia</b> e salve — vira <b>avulso</b>, e você o lança como aula extra quando treinarem.</div>
+    <div class="frow" style="margin-top:14px">
+      <button class="save" id="fSave">${ed?"Salvar alterações":"Adicionar aluno"}</button>
+      ${ed?'<button class="cancel" id="fCancel">cancelar</button>':""}
+    </div>`;
+  el.appendChild(f);
+
+  function paintHorarios(){
+    const box=f.querySelector("#fHorarios");
+    box.innerHTML=formHorarios.map((r,i)=>`
+      <div class="hrow">
+        <select class="hdia" data-i="${i}">
+          <option value="">— dia —</option>
+          ${DSEM.map((d,idx)=>`<option value="${idx}"${r.dia===idx?" selected":""}>${d}</option>`).join("")}
+        </select>
+        <input class="hhora" data-i="${i}" type="time" value="${r.hora||""}">
+        ${formHorarios.length>1?`<button type="button" class="hdel" data-i="${i}" aria-label="remover horário">🗑</button>`:""}
+      </div>`).join("");
+    box.querySelectorAll(".hdia").forEach(s=>s.onchange=e=>{
+      formHorarios[+e.target.dataset.i].dia = e.target.value===""?null:Number(e.target.value);
+    });
+    box.querySelectorAll(".hhora").forEach(inp=>inp.onchange=e=>{
+      formHorarios[+e.target.dataset.i].hora=e.target.value;
+    });
+    box.querySelectorAll(".hdel").forEach(b=>b.onclick=e=>{
+      formHorarios.splice(+e.target.dataset.i,1);paintHorarios();
+    });
+  }
+  paintHorarios();
+  f.querySelector("#fAddHora").onclick=()=>{formHorarios.push({dia:null,hora:""});paintHorarios()};
+
+  const fc=f.querySelector("#fCancel");
+  if(fc)fc.onclick=()=>{editandoAluno=null;formHorarios=null;render()};
+  f.querySelector("#fSave").onclick=()=>{
+    const nome=f.querySelector("#fNome").value.trim();
+    const valor=Number(f.querySelector("#fValor").value);
+    if(!nome){alert("Falta o nome do aluno.");return}
+    if(!valor){alert("Falta o valor (R$).");return}
+    const horarios={};
+    formHorarios.forEach(r=>{if(r.dia!==null&&r.dia!==undefined)horarios[r.dia]=r.hora||""});
+    const dias=Object.keys(horarios).map(Number).sort((a,b)=>a-b);
+    if(!dias.length&&!confirm("Nenhum dia da semana marcado.\n\nCadastrar como aluno AVULSO (sem dia fixo)? Ele não aparece sozinho nos dias — você o lança como \"aula extra\" toda vez que treinarem."))return;
+    const desde=f.querySelector("#fDesde").value||primeiroDoMes();
+    const fq=f.querySelector("#fFranquia").value;
+    const franquia=fq===""?FRANQUIA_PADRAO:Math.max(0,Math.floor(Number(fq)||0));
+    const dados={nome,valor,tipo:f.querySelector("#fTipo").value,horarios,dias,desde,franquia};
+    if(ed)Object.assign(ed,dados);
+    else DB.alunos.push(Object.assign({id:"a"+Date.now().toString(36),ativo:true,ate:null,cadastro:hojeStr()},dados));
+    editandoAluno=null;formHorarios=null;
+    saveDB();render();
+  };
+
+  DB.alunos.forEach(a=>{
+    const card=document.createElement("div");
+    card.className="acard"+(a.ativo===false?" inativo":"");
+    const agenda=a.dias.length?a.dias.map(i=>DSEM[i]+(a.horarios&&a.horarios[i]?" "+a.horarios[i]:"")).join(" · "):"🔁 avulso (sem dia fixo)";
+    card.innerHTML=`<div class="info"><div class="nm">${esc(a.nome)}${a.ativo===false?" · <span style='color:var(--dim)'>pausado</span>":""}</div>
+      <div class="dt2">${agenda} ·
+        ${a.tipo==="mensal"?"mensal "+fmtRS(a.valor):fmtRS(a.valor)+"/aula"} · 🎁 ${franquiaDe(a)} faltas grátis/ano · desde ${labelData(a.desde)}</div></div>
+      <button class="bEd">editar</button>
+      <button class="bPause">${a.ativo===false?"reativar":"pausar"}</button>
+      <button class="bDel">excluir</button>`;
+    card.querySelector(".bEd").onclick=()=>{editandoAluno=a.id;formHorarios=null;render();window.scrollTo({top:0})};
+    card.querySelector(".bPause").onclick=()=>{
+      if(a.ativo===false){a.ativo=true;a.ate=null}
+      else{a.ativo=false;a.ate=hojeStr()}
+      saveDB();render();
+    };
+    card.querySelector(".bDel").onclick=()=>{
+      if(!confirm("Excluir "+a.nome+" e TODO o histórico de aulas dele? (Pra manter o histórico, use 'pausar'.)"))return;
+      DB.alunos=DB.alunos.filter(x=>x.id!==a.id);
+      Object.keys(DB.reg).forEach(k=>{if(k.endsWith("_"+a.id))delete DB.reg[k]});
+      DB.extras=DB.extras.filter(e=>e.aluno!==a.id);
+      Object.keys(DB.pag).forEach(k=>{if(k.endsWith("_"+a.id))delete DB.pag[k]});
+      saveDB();render();
+    };
+    el.appendChild(card);
+  });
+  if(!DB.alunos.length)
+    el.insertAdjacentHTML("beforeend",`<div class="empty">Cadastre o primeiro aluno no formulário acima — nome, valor e cada dia da semana com seu horário.</div>`);
+}
+
+/* ───────────────── util + boot ───────────────── */
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function renderBackupBar(){
+  const el=document.getElementById("backupbar");
+  el.style.display="flex";
+  if(!DB.alunos.length){
+    // aparelho novo/vazio: a barra vira a porta de entrada pra TRAZER os dados
+    el.className="backupbar novo";
+    el.innerHTML=`<span>📥 <b>Primeira vez neste aparelho?</b> Traga seus dados do outro — sem recadastrar nada.</span>
+      <span class="bkbtns">
+        <button id="bkRestore">restaurar backup</button>
+        <button id="bkTexto" class="ghost">🔁 por texto</button>
+      </span>
+      <input type="file" id="bkFile" style="display:none">`;
+  }else{
+    const d=diasDesde(DB.lastBackup);
+    let txt,stale=false;
+    if(d===null){txt="Você ainda não fez backup";stale=true}
+    else if(d===0)txt="Backup feito hoje ✓";
+    else if(d===1)txt="Último backup: ontem";
+    else{txt="Último backup: há "+d+" dias";stale=d>10}
+    el.className="backupbar"+(stale?" stale":"");
+    el.innerHTML=`<span>💾 ${txt}</span>
+      <span class="bkbtns">
+        <button id="bkNow">baixar backup</button>
+        <button id="bkRestore" class="ghost">restaurar</button>
+        <button id="bkTexto" class="ghost">🔁 texto</button>
+      </span>
+      <input type="file" id="bkFile" style="display:none">`;
+    el.querySelector("#bkNow").onclick=baixarBackup;
+  }
+  el.querySelector("#bkRestore").onclick=()=>el.querySelector("#bkFile").click();
+  el.querySelector("#bkTexto").onclick=abrirTransferencia;
+  el.querySelector("#bkFile").onchange=restoreFrom;
+}
+function render(){
+  Object.keys(tabs).forEach(k=>{
+    tabs[k].classList.toggle("active",view===k);
+    views[k].style.display=view===k?"block":"none";
+  });
+  renderBackupBar();
+  const pend=pendencias();
+  const badge=document.getElementById("pendBadge");
+  badge.style.display=pend.length?"inline":"none";
+  badge.textContent=pend.length;
+  if(view==="dia")renderDia();
+  else if(view==="mes")renderMes();
+  else if(view==="fin")renderFinanceiro();
+  else renderAlunos();
+  refreshSandbox();
+}
+render();
+</script>
+<script>
+/* ── OFFLINE ──────────────────────────────────────────────────────────
+   Guarda o app no próprio iPhone na primeira abertura COM internet.
+   O selo no rodapé diz, sem rodeio, se já dá pra usar sem sinal.      */
+(function () {
+  var selo = document.getElementById("offstatus");
+  function diz(txt, classe) { if (selo) { selo.innerHTML = txt; selo.className = "offstatus " + (classe || ""); } }
+
+  if (!("serviceWorker" in navigator)) {
+    diz("📴 Este navegador não guarda o app pra usar sem internet. No iPhone, abra pelo <b>Safari</b>.", "nao");
+    return;
+  }
+  if (!window.isSecureContext) {
+    diz("📴 O modo offline só funciona em endereço <b>https</b>. Abrindo o arquivo direto do computador ele não liga.", "nao");
+    return;
+  }
+
+  async function conferir() {
+    try {
+      var nomes = await caches.keys();
+      var meu = nomes.filter(function (n) { return n.indexOf("aulas-") === 0; })[0];
+      var temApp = false;
+      if (meu) {
+        var c = await caches.open(meu);
+        temApp = !!(await c.match("./index.html", { ignoreSearch: true }));
+      }
+      if (temApp) diz("📴 <b>Pronto pra usar sem internet</b> ✓ — pode marcar presença na academia mesmo sem sinal.", "ok");
+      else diz("📴 Ainda guardando o app… deixe esta tela aberta alguns segundos com internet e recarregue.", "nao");
+    } catch (e) { diz("", ""); }
+  }
+
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js").then(function (reg) {
+      if (reg.installing) reg.installing.addEventListener("statechange", function () {
+        if (this.state === "activated" || this.state === "installed") conferir();
+      });
+      setTimeout(conferir, 1200);
+      conferir();
+    }).catch(function () {
+      diz("📴 Não consegui ligar o modo offline aqui. Confira se o arquivo <b>sw.js</b> subiu junto com o app.", "nao");
+    });
+  });
+})();
+</script>
+</body>
+</html>
